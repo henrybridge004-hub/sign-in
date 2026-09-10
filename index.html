@@ -440,32 +440,57 @@ function syncToGithub(callback) {
     return;
   }
   syncing = true;
-  var data = {
-    version: new Date().toISOString(),
-    archs: config.archs,
-    students: config.students
-  };
-  var contentStr = JSON.stringify(data, null, 2);
-  /* base64 编码（支持中文） */
-  var content = '';
-  try {
-    content = btoa(unescape(encodeURIComponent(contentStr)));
-  } catch (e) {
-    syncing = false;
-    if (callback) callback(false, '编码失败：' + e.message);
-    return;
-  }
   var apiBase = 'https://api.github.com/repos/' + gh.owner + '/' + gh.repo + '/contents/' + gh.path;
-  /* 1. 获取当前文件 SHA */
+
+  /* 1. 先从远程拉取最新 config.json，用于智能合并（避免空名单覆盖远程数据） */
   fetch(apiBase + '?ref=' + gh.branch, {
     headers: { 'Authorization': 'token ' + gh.token, 'Accept': 'application/vnd.github.v3+json' }
   })
   .then(function(r) {
-    if (!r.ok) throw new Error('获取文件失败 HTTP ' + r.status);
+    if (!r.ok) throw new Error('获取远程配置失败 HTTP ' + r.status);
     return r.json();
   })
   .then(function(file) {
-    /* 2. 更新文件 */
+    /* 解析远程配置 */
+    var remoteConfig = {};
+    try {
+      var raw = atob(file.content.replace(/\n/g, ''));
+      remoteConfig = JSON.parse(decodeURIComponent(escape(raw)));
+    } catch (e) {
+      console.warn('解析远程配置失败，将使用本地配置', e);
+    }
+
+    /* 2. 智能合并：
+       - 架构总是用本地的（用户明确修改了架构）
+       - 名单：本地非空用本地；本地为空但远程非空，保留远程名单（只同步架构变更）
+    */
+    var archsToSync = config.archs || [];
+    var studentsToSync = config.students || [];
+    var preservedRemote = false;
+    if (studentsToSync.length === 0 && remoteConfig.students && remoteConfig.students.length > 0) {
+      studentsToSync = remoteConfig.students;
+      preservedRemote = true;
+      console.log('本地名单为空，保留远程名单:', studentsToSync.length, '人，仅同步架构变更');
+    }
+
+    var data = {
+      version: new Date().toISOString(),
+      archs: archsToSync,
+      students: studentsToSync
+    };
+    var contentStr = JSON.stringify(data, null, 2);
+
+    /* base64 编码（支持中文） */
+    var content = '';
+    try {
+      content = btoa(unescape(encodeURIComponent(contentStr)));
+    } catch (e) {
+      syncing = false;
+      if (callback) callback(false, '编码失败：' + e.message);
+      return;
+    }
+
+    /* 3. 更新远程文件 */
     return fetch(apiBase, {
       method: 'PUT',
       headers: { 'Authorization': 'token ' + gh.token, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
@@ -475,21 +500,22 @@ function syncToGithub(callback) {
         sha: file.sha,
         branch: gh.branch
       })
+    }).then(function(r) {
+      return { ok: r.ok, status: r.status, preservedRemote: preservedRemote };
     });
   })
-  .then(function(r) {
-    if (!r.ok) throw new Error('更新失败 HTTP ' + r.status);
-    return r.json();
-  })
-  .then(function() {
+  .then(function(result) {
+    if (!result.ok) throw new Error('更新失败 HTTP ' + result.status);
     syncing = false;
-    if (callback) callback(true, '同步成功');
+    var msg = result.preservedRemote ? '同步成功（仅更新架构，保留远程名单）' : '同步成功';
+    if (callback) callback(true, msg);
   })
   .catch(function(e) {
     syncing = false;
     if (callback) callback(false, '同步失败：' + e.message);
   });
 }
+
 function autoSync() {
   if (config.github && config.github.autoSync && config.github.token) {
     syncToGithub(function(ok, msg) {
