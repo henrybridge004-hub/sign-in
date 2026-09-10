@@ -577,7 +577,8 @@ function loadRemoteConfig() {
     .then(function (cfg) {
       if (cfg && Array.isArray(cfg.batches)) {
         batches = cfg.batches;
-        if (cfg.currentBatch) { settings.current = cfg.currentBatch; }
+        saveBatches();
+        if (cfg.currentBatch) { settings.current = cfg.currentBatch; setLS(LS_KEYS.settings, settings); }
         _remoteConfigLoaded = true;
         console.log('Remote config loaded, batches:', batches.length);
         return true;
