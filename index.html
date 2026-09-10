@@ -2,332 +2,212 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>培训签到系统</title>
 <style>
-  :root{
-    --primary:#0089FF; --primary-dark:#0066C7; --primary-light:rgba(0,137,255,.08);
-    --bg:#F5F7FA; --card:#FFFFFF; --text:#1A1B1C; --sub:#6B7280;
-    --line:#E5E8EE; --ok:#00A854; --ok-light:rgba(0,168,84,.08);
-    --warn:#E6A23C; --danger:#D93026; --danger-light:#FEE9E9;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-  body{
-    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
-    background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;
-  }
-  .wrap{max-width:560px;margin:0 auto;padding:20px 16px 96px;}
-  .wrap.wide{max-width:1020px;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:#f5f6fa;color:#1a1b1c;min-height:100vh}
+.hide{display:none!important}
+#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.8);color:#fff;padding:10px 20px;border-radius:8px;font-size:14px;z-index:9999;opacity:0;transition:opacity 0.3s;pointer-events:none}
+#toast.show{opacity:1}
 
-  /* ===== 头部 ===== */
-  .header{text-align:center;margin-bottom:16px;}
-  .header .logo{
-    width:46px;height:46px;border-radius:13px;margin:0 auto 8px;
-    background:linear-gradient(135deg,#0089FF,#00B3FF);
-    display:flex;align-items:center;justify-content:center;
-  }
-  .header h1{font-size:21px;font-weight:700;letter-spacing:.5px;}
-  .header p{font-size:13px;color:var(--sub);margin-top:3px;}
+/* 首页 */
+#home{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.big-qr-box{background:#fff;border-radius:16px;padding:30px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.08);max-width:400px;width:100%}
+.big-qr-box h1{font-size:22px;margin-bottom:8px;color:#1a1b1c}
+.big-qr-box .subtitle{font-size:13px;color:#6b7280;margin-bottom:20px}
+#bigQr{margin:0 auto 16px}
+#bigQr img,#bigQr canvas{width:220px!important;height:220px!important}
+.sign-form{margin-top:16px}
+.sign-form input{width:100%;padding:12px 14px;border:1px solid #e4e3dd;border-radius:10px;font-size:15px;margin-bottom:10px;outline:none;transition:border-color 0.2s}
+.sign-form input:focus{border-color:#4a7dff}
+.sign-form button{width:100%;padding:12px;background:#4a7dff;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;transition:background 0.2s}
+.sign-form button:hover{background:#3a6def}
+.home-tip{margin-top:12px;font-size:12px;color:#6b7280;text-align:center}
 
-  .card{background:var(--card);border-radius:16px;padding:18px 16px;box-shadow:0 1px 4px rgba(0,0,0,.05);margin-bottom:14px;}
-  .card-title{font-size:15px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
-  .hide{display:none !important;}
+/* 签到结果卡片 */
+.result-card{background:#fff;border-radius:16px;padding:24px;margin-top:16px;box-shadow:0 4px 20px rgba(0,0,0,0.08);max-width:400px;width:100%}
+.student-info{display:flex;align-items:center;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #f0f0f0}
+.avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#4a7dff,#6b9dff);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;margin-right:12px}
+.student-name{font-size:18px;font-weight:600;margin-bottom:4px}
+.student-meta{font-size:12px;color:#6b7280}
+.arch-tag{display:inline-block;padding:4px 10px;background:#eef2ff;color:#4a7dff;border-radius:12px;font-size:12px;font-weight:500}
+.step-card{margin-bottom:16px}
+.step-card:last-child{margin-bottom:0}
+.step-title{display:flex;align-items:center;margin-bottom:10px}
+.step-num{width:24px;height:24px;border-radius:50%;background:#4a7dff;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;margin-right:8px}
+.step-name{font-size:15px;font-weight:600}
+.step-desc{font-size:12px;color:#6b7280;margin-bottom:10px}
+.step-btns{display:flex;gap:10px;margin-bottom:10px}
+.step-btn{flex:1;padding:10px;background:#4a7dff;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:4px}
+.step-btn:hover{background:#3a6def}
+.qr-box{text-align:center}
+.qr-box img,.qr-box canvas{width:140px!important;height:140px!important;margin:0 auto}
+.qr-label{font-size:11px;color:#9ca3af;margin-top:6px}
+.success-tip{text-align:center;padding:12px;background:#f0fdf4;color:#16a34a;border-radius:10px;font-size:13px;margin-top:16px}
+.notfound-card{background:#fff;border-radius:16px;padding:24px;margin-top:16px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.08);max-width:400px;width:100%}
+.notfound-card .icon{font-size:40px;margin-bottom:12px}
+.notfound-card h3{font-size:16px;margin-bottom:8px}
+.notfound-card p{font-size:13px;color:#6b7280}
 
-  /* ===== 大屏二维码 ===== */
-  .big-qr{text-align:center;padding:20px 16px;}
-  .big-qr .qr-frame{
-    display:inline-block;background:#fff;border:10px solid #fff;border-radius:18px;
-    box-shadow:0 4px 18px rgba(0,0,0,.10);
-  }
-  .big-qr .qr-frame canvas,.big-qr .qr-frame img{width:260px;height:260px;display:block;max-width:100%;}
-  .big-qr .qr-cap{font-size:14px;color:var(--sub);margin-top:12px;}
-  .big-qr .qr-date{
-    display:inline-block;margin-top:10px;padding:5px 14px;border-radius:999px;
-    background:var(--primary-light);color:var(--primary);font-size:14px;font-weight:600;
-  }
+/* 管理员入口 */
+.admin-entry{position:fixed;bottom:20px;right:20px;background:rgba(0,0,0,0.5);color:#fff;padding:8px 14px;border-radius:20px;font-size:12px;cursor:pointer;z-index:100;display:flex;align-items:center;gap:4px;backdrop-filter:blur(4px)}
+.admin-entry:hover{background:rgba(0,0,0,0.7)}
 
-  /* 大屏（投屏）：只显示大二维码，隐藏输入框 */
-  @media (min-width: 768px) {
-    .sign-input-card { display: none !important; }
-    .big-qr .qr-frame canvas, .big-qr .qr-frame img { width: 340px; height: 340px; }
-    .big-qr { padding: 36px 16px; }
-    .big-qr .qr-cap { font-size: 16px; }
-  }
+/* 登录页 */
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-box{background:#fff;border-radius:16px;padding:32px;width:100%;max-width:360px;box-shadow:0 4px 20px rgba(0,0,0,0.08)}
+.login-box h2{text-align:center;margin-bottom:24px;font-size:20px}
+.login-box input{width:100%;padding:12px 14px;border:1px solid #e4e3dd;border-radius:10px;font-size:15px;margin-bottom:16px;outline:none}
+.login-box input:focus{border-color:#4a7dff}
+.login-box button{width:100%;padding:12px;background:#4a7dff;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer}
+.login-box .tip{text-align:center;font-size:12px;color:#9ca3af;margin-top:12px}
 
-  /* 手机端（学员扫码后）：隐藏大二维码，只显示输入姓名 */
-  @media (max-width: 767px) {
-    .big-qr { display: none !important; }
-  }
+/* 管理后台 */
+#admin{min-height:100vh;padding:20px;max-width:1200px;margin:0 auto}
+.admin-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.admin-header h1{font-size:20px}
+.admin-actions{display:flex;gap:8px;align-items:center}
+.btn{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all 0.2s;display:inline-flex;align-items:center;gap:4px}
+.btn-primary{background:#4a7dff;color:#fff}
+.btn-primary:hover{background:#3a6def}
+.btn-ghost{background:#f3f4f6;color:#374151}
+.btn-ghost:hover{background:#e5e7eb}
+.btn-danger{background:#fee2e2;color:#dc2626}
+.btn-danger:hover{background:#fecaca}
+.btn-sm{padding:6px 12px;font-size:12px}
 
-  /* ===== 表单 ===== */
-  .row{display:flex;gap:10px;}
-  .row input,.row select{flex:1;min-width:0;}
-  input[type="text"],input[type="password"],input[type="date"],select{
-    height:44px;padding:0 14px;font-size:16px;border:1px solid var(--line);
-    border-radius:12px;background:#FBFCFE;color:var(--text);outline:none;width:100%;
-  }
-  input:focus,select:focus{border-color:var(--primary);}
-  textarea{width:100%;padding:10px 12px;font-size:13px;border:1px solid var(--line);border-radius:12px;background:#FBFCFE;outline:none;resize:vertical;font-family:inherit;}
-  .btn{
-    height:44px;padding:0 20px;border:none;border-radius:12px;background:var(--primary);color:#fff;
-    font-size:15px;font-weight:600;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:6px;
-  }
-  .btn:active{background:var(--primary-dark);}
-  .btn-block{width:100%;}
-  .btn-ghost{background:#EEF3F8;color:var(--text);}
-  .btn-danger{background:var(--danger-light);color:var(--danger);}
-  .btn-sm{height:34px;padding:0 12px;font-size:13px;border-radius:10px;}
-  .tip{font-size:12px;color:var(--sub);margin-top:8px;}
-  .muted{color:var(--sub);}
-  .field{margin-bottom:12px;}
-  .field label{display:block;font-size:13px;color:var(--sub);margin-bottom:6px;}
+.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid #e5e7eb;flex-wrap:wrap}
+.tab{padding:10px 16px;font-size:14px;font-weight:500;color:#6b7280;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all 0.2s}
+.tab:hover{color:#4a7dff}
+.tab.active{color:#4a7dff;border-bottom-color:#4a7dff}
 
-  /* ===== 学员信息 ===== */
-  .student-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-  .avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#0089FF,#00B3FF);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;flex:none;}
-  .student-bar .name{font-size:17px;font-weight:700;}
-  .student-bar .meta{font-size:12px;color:var(--sub);margin-top:2px;}
-  .arch-tag{margin-left:auto;padding:4px 12px;border-radius:999px;background:var(--primary-light);color:var(--primary);font-size:13px;font-weight:600;}
+.card{background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+.card-title{font-size:15px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.tip{font-size:12px;color:#6b7280;margin-bottom:12px;line-height:1.6}
+.toolbar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
 
-  .step{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);}
-  .step:last-child{border-bottom:none;padding-bottom:0;}
-  .step:first-child{padding-top:0;}
-  .step-no{width:32px;height:32px;border-radius:50%;flex:none;background:var(--primary);color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:2px;}
-  .step-body{flex:1;min-width:0;}
-  .step-body h3{font-size:15px;font-weight:600;}
-  .step-body p{font-size:12px;color:var(--sub);margin-top:3px;}
-  .step-actions{display:flex;align-items:flex-start;gap:14px;margin-top:12px;flex-wrap:wrap;}
-  .open-btn{display:inline-flex;align-items:center;gap:6px;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;font-size:14px;font-weight:600;background:var(--primary);color:#fff;text-decoration:none;}
-  .open-btn:active{background:var(--primary-dark);}
-  .qr-box{width:160px;background:#FBFCFE;border:1px dashed var(--line);border-radius:12px;padding:8px;text-align:center;}
-  .qr-box canvas,.qr-box img{width:144px;height:144px;display:block;margin:0 auto;background:#fff;}
-  .qr-box .qr-label{font-size:11px;color:var(--sub);margin-top:6px;}
-  .qr-empty{width:144px;height:144px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--sub);background:#fff;text-align:center;}
+/* 架构配置 */
+.arch-list{display:flex;flex-direction:column;gap:12px}
+.arch-row{display:grid;grid-template-columns:1fr 2fr 2fr auto;gap:10px;align-items:end;padding:14px;background:#f9fafb;border-radius:10px}
+.arch-row label{display:block;font-size:11px;color:#6b7280;margin-bottom:4px}
+.arch-row input{width:100%;padding:8px 10px;border:1px solid #e4e3dd;border-radius:6px;font-size:13px;outline:none}
+.arch-row input:focus{border-color:#4a7dff}
+.empty-tip{text-align:center;padding:30px;color:#9ca3af;font-size:13px}
 
-  .done-banner{display:flex;align-items:center;gap:8px;margin-top:12px;background:var(--ok-light);border:1px solid rgba(0,168,84,.3);border-radius:12px;padding:10px 12px;font-size:13px;color:#007A3D;}
+/* 名单管理 */
+.stu-table{width:100%;border-collapse:collapse;font-size:13px}
+.stu-table th{background:#f9fafb;padding:10px 12px;text-align:left;font-weight:600;color:#374151;border-bottom:2px solid #e5e7eb}
+.stu-table td{padding:10px 12px;border-bottom:1px solid #f3f4f6}
+.stu-table tr:hover{background:#f9fafb}
+.match-ok{color:#16a34a;font-weight:500}
+.match-fail{color:#dc2626;font-weight:500}
+.match-tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px}
+.match-tag.ok{background:#dcfce7;color:#16a34a}
+.match-tag.fail{background:#fee2e2;color:#dc2626}
+.drop-zone{border:2px dashed #d1d5db;border-radius:10px;padding:30px;text-align:center;color:#9ca3af;font-size:13px;cursor:pointer;transition:all 0.2s;margin-bottom:16px}
+.drop-zone:hover,.drop-zone.dragover{border-color:#4a7dff;background:#f0f7ff;color:#4a7dff}
+.stats-row{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.stat-item{background:#f9fafb;padding:12px 16px;border-radius:8px;flex:1;min-width:100px}
+.stat-item .num{font-size:24px;font-weight:700;color:#1a1b1c}
+.stat-item .label{font-size:12px;color:#6b7280;margin-top:2px}
 
-  .result-msg{font-size:13px;color:var(--sub);padding:14px 0 4px;}
-  .result-msg b{color:var(--text);}
-
-  /* ===== 管理员入口 ===== */
-  .admin-entry{
-    position:fixed;right:14px;bottom:14px;z-index:50;
-    padding:10px 16px;min-height:44px;border-radius:999px;background:rgba(26,27,28,.55);color:#fff;
-    font-size:12px;cursor:pointer;border:none;display:flex;align-items:center;gap:5px;
-  }
-
-  /* ===== 管理后台 ===== */
-  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
-  .toolbar .spacer{flex:1;}
-  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;border-bottom:1px solid var(--line);}
-  .tab{padding:9px 16px;font-size:14px;color:var(--sub);cursor:pointer;border:none;background:none;border-radius:10px 10px 0 0;font-weight:600;}
-  .tab.active{color:var(--primary);border-bottom:2px solid var(--primary);}
-
-  table{width:100%;border-collapse:collapse;}
-  th,td{padding:8px 6px;border-bottom:1px solid #F0F2F6;vertical-align:middle;font-size:13px;}
-  th{font-size:12px;color:var(--sub);font-weight:600;text-align:left;white-space:nowrap;}
-  td input[type="text"]{height:36px;font-size:13px;padding:0 8px;min-width:90px;}
-  td select{height:36px;font-size:13px;min-width:90px;}
-
-  .arch-row{display:flex;gap:10px;flex-wrap:wrap;padding:10px 0;border-bottom:1px solid #F0F2F6;align-items:flex-end;}
-  .arch-row > div{flex:1 1 140px;min-width:0;}
-  .arch-row label{display:block;font-size:12px;color:var(--sub);margin-bottom:4px;}
-  .arch-row input[type="text"]{height:38px;font-size:13px;padding:0 10px;min-width:0;}
-  .arch-row .del-box{flex:0 0 auto;}
-
-  .dropzone{
-    border:2px dashed #C9D6E4;border-radius:14px;padding:26px 16px;text-align:center;
-    color:var(--sub);font-size:14px;cursor:pointer;background:#FBFCFE;margin-bottom:10px;
-    transition:border-color .15s,background .15s;
-  }
-  .dropzone.drag{border-color:var(--primary);background:var(--primary-light);color:var(--primary);}
-
-  .stat-grid{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
-  .stat{flex:1 1 120px;min-width:0;background:#FBFCFE;border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center;}
-  .stat .num{font-size:22px;font-weight:700;}
-  .stat .lab{font-size:12px;color:var(--sub);margin-top:2px;}
-
-  .chk-list{max-height:320px;overflow:auto;}
-  .chk-item{display:flex;align-items:center;gap:8px;padding:7px 4px;border-bottom:1px solid #F0F2F6;font-size:13px;}
-  .chk-item .dot{width:8px;height:8px;border-radius:50%;flex:none;}
-  .dot-ok{background:var(--ok);}
-  .dot-no{background:var(--warn);}
-  .chk-item .t{color:var(--sub);font-size:12px;margin-left:auto;}
-
-  .empty-tip{text-align:center;color:#9AA3AF;font-size:13px;padding:20px 0;}
-
-  #toast{
-    position:fixed;left:50%;bottom:60px;transform:translateX(-50%) translateY(20px);
-    background:rgba(26,27,28,.88);color:#fff;font-size:13px;padding:10px 18px;border-radius:999px;
-    opacity:0;pointer-events:none;transition:all .25s;z-index:99;max-width:86vw;text-align:center;
-  }
-  #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
-  .login-box{max-width:360px;margin:40px auto 0;}
-  .login-title{text-align:center;font-size:16px;font-weight:600;margin-bottom:16px;}
+/* 大屏模式 */
+@media (min-width: 768px) {
+  .sign-form{display:none}
+  #bigQr img,#bigQr canvas{width:260px!important;height:260px!important}
+  .big-qr-box h1{font-size:28px}
+}
 </style>
 </head>
 <body>
 
-<!-- ============ 学员端 ============ -->
-<div class="wrap" id="view-home">
-  <div class="header">
-    <div class="logo">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 5h7v7H4zM13 5h7v7h-7zM4 14h7v7H4z" fill="#fff"/><circle cx="17.5" cy="17.5" r="3.5" fill="#fff"/></svg>
+<!-- 首页（学员端） -->
+<div id="home">
+  <div class="big-qr-box">
+    <h1>培训签到系统</h1>
+    <div class="subtitle">请用钉钉扫一扫上方二维码进入签到</div>
+    <div id="bigQr"></div>
+    <div class="sign-form">
+      <input type="text" id="kw" placeholder="输入你的姓名" autocomplete="off">
+      <button id="searchBtn" type="button">签 到</button>
     </div>
-    <h1 id="siteTitle">培训签到系统</h1>
-    <p id="siteOrg"></p>
+    <div class="home-tip" id="homeTip"></div>
   </div>
+  <div id="resultArea"></div>
+</div>
 
-  <div class="card big-qr">
-    <div class="qr-frame" id="bigQr"></div>
-    <div class="qr-date" id="curBatchTag"></div>
-    <div class="qr-cap">请用钉钉扫一扫上方二维码进入签到</div>
-  </div>
-
-  <div class="card sign-input-card">
-    <div class="card-title">扫码签到</div>
-    <div class="row">
-      <input id="kw" type="text" placeholder="输入你的姓名" autocomplete="off" autocapitalize="off">
-      <button class="btn" id="searchBtn" type="button">签到</button>
-    </div>
-    <div class="tip" id="homeTip">输入姓名后自动匹配你的架构，并完成签到。</div>
-  </div>
-
-  <div id="notfoundCard" class="card hide">
-    <div class="card-title">未找到你的信息</div>
-    <div class="result-msg">名单中未匹配到 <b id="nfKeyword"></b>，请确认姓名是否正确，或联系管理员。</div>
-  </div>
-
-  <div id="ambiguousCard" class="card hide">
-    <div class="card-title">匹配到多个同名学员</div>
-    <div class="result-msg">请选择你的名字：</div>
-    <div id="ambList" style="margin-top:8px;"></div>
-  </div>
-
-  <div id="okCard" class="card hide">
-    <div class="student-bar">
-      <div class="avatar" id="stAvatar">?</div>
-      <div>
-        <div class="name" id="stName"></div>
-        <div class="meta" id="stMeta"></div>
-      </div>
-      <div class="arch-tag" id="stArchTag"></div>
-    </div>
-    <div style="margin-top:14px;">
-      <div class="step">
-        <div class="step-no">1</div>
-        <div class="step-body">
-          <h3>加入你的架构</h3>
-          <p>用钉钉打开并确认加入，等待管理员通过。</p>
-          <div class="step-actions">
-            <a id="joinBtn" class="open-btn" href="#" target="_blank">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M14 5h5v5M19 5l-8 8" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M19 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h4" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
-              在钉钉中打开
-            </a>
-            <div class="qr-box"><div id="qr1"></div><div class="qr-label">或用钉钉扫码加入</div></div>
-          </div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-no">2</div>
-        <div class="step-body">
-          <h3>填写入职登记</h3>
-          <p>加入架构后，填写该架构的入职登记表。</p>
-          <div class="step-actions">
-            <a id="formBtn" class="open-btn" href="#" target="_blank">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M14 5h5v5M19 5l-8 8" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M19 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h4" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
-              在钉钉中打开
-            </a>
-            <div class="qr-box"><div id="qr2"></div><div class="qr-label">或用钉钉扫码填写</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="done-banner">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#00A854" stroke-width="2"/><path d="M8 12l3 3 5-6" stroke="#00A854" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      签到成功。请按顺序完成以上两步，均在钉钉内进行。
-    </div>
+<!-- 登录页 -->
+<div id="login" class="hide">
+  <div class="login-box">
+    <h2>管理员登录</h2>
+    <input type="password" id="adminPwd" placeholder="请输入管理员密码">
+    <button id="loginBtn" type="button">登 录</button>
+    <div class="tip">密码请联系管理员获取</div>
   </div>
 </div>
 
-<!-- ============ 管理员登录 ============ -->
-<div class="wrap hide" id="view-login">
-  <div class="card login-box">
-    <div class="login-title">管理员登录</div>
-    <div class="field">
-      <input id="adminPwd" type="password" placeholder="请输入管理员密码">
+<!-- 管理后台 -->
+<div id="admin" class="hide">
+  <div class="admin-header">
+    <h1>管理后台</h1>
+    <div class="admin-actions">
+      <button class="btn btn-ghost btn-sm" id="exportConfigBtn" type="button">导出配置</button>
+      <button class="btn btn-ghost btn-sm" id="logoutBtn" type="button">退出</button>
     </div>
-    <button class="btn btn-block" id="loginBtn" type="button">登 录</button>
-    <div class="tip" style="text-align:center;margin-top:10px;">密码请联系管理员获取</div>
-  </div>
-</div>
-
-<!-- ============ 管理后台 ============ -->
-<div class="wrap wide hide" id="view-admin">
-  <div class="toolbar">
-    <div style="font-size:16px;font-weight:700;">管理后台</div>
-    <div class="spacer"></div>
-    <span class="muted" style="font-size:13px;">当前批次：</span>
-    <select id="batchSelect" style="width:auto;"></select>
-    <button class="btn btn-ghost btn-sm" id="refreshBtn" type="button">刷新签到</button>
-    <button class="btn btn-ghost btn-sm" id="logoutBtn" type="button">退出</button>
   </div>
 
   <div class="tabs">
-    <button class="tab active" data-tab="batch" type="button">批次</button>
-    <button class="tab" data-tab="arch" type="button">架构</button>
-    <button class="tab" data-tab="stu" type="button">名单</button>
-    <button class="tab" data-tab="check" type="button">签到情况</button>
-    <button class="tab" data-tab="setting" type="button">设置</button>
+    <div class="tab active" data-tab="arch">架构配置</div>
+    <div class="tab" data-tab="stu">名单管理</div>
+    <div class="tab" data-tab="check">签到情况</div>
   </div>
 
-  <!-- 批次 -->
-  <div class="card tab-panel" id="panel-batch">
-    <div class="card-title">新建批次（按入职日期）</div>
-    <div class="row">
-      <input id="newBatchDate" type="date">
-      <button class="btn" id="addBatchBtn" type="button">创建批次</button>
+  <!-- 架构配置 -->
+  <div class="card tab-panel" id="panel-arch">
+    <div class="card-title">
+      架构配置（全局，所有学员共用）
     </div>
-    <div class="tip">每个批次 = 一个入职日期，拥有独立的架构配置和名单。创建后到「名单」页导入该批学员。</div>
-    <div style="height:16px;"></div>
-    <div class="card-title">批次列表</div>
-    <div style="overflow-x:auto;">
-      <table>
-        <thead><tr><th>入职日期</th><th>架构数</th><th>名单人数</th><th>已签到</th><th style="width:150px;">操作</th></tr></thead>
-        <tbody id="batchTable"></tbody>
-      </table>
+    <div class="tip">
+      配置每个架构的「加入钉钉组织邀请链接」和「入职登记链接」。名单导入后会自动根据「所属钉钉」模糊匹配到对应架构。<br>
+      默认架构：探迹、探迹智能、探域、汉数、数字贸易岗、探呼、探讯
+    </div>
+    <div class="toolbar">
+      <button class="btn btn-primary btn-sm" id="addArchBtn" type="button">+ 添加架构</button>
+      <button class="btn btn-danger btn-sm" id="clearArchBtn" type="button">一键清空</button>
+    </div>
+    <div class="arch-list" id="archList"></div>
+    <div class="toolbar" style="margin-top:16px">
+      <button class="btn btn-primary" id="saveArchBtn" type="button">保存架构配置</button>
     </div>
   </div>
 
-  <!-- 架构 -->
-  <div class="card tab-panel hide" id="panel-arch">
-    <div class="card-title">架构配置（<span id="archBatchTag"></span>）</div>
-    <div id="archList"></div>
-    <div class="toolbar" style="margin-top:12px;">
-      <button class="btn btn-ghost" id="addArchBtn" type="button">+ 添加架构</button>
-      <button class="btn" id="saveArchBtn" type="button">保存架构配置</button>
-    </div>
-    <div class="tip">第 1 个码：加入该钉钉组织的邀请链接；第 2 个码：入职登记链接。学员名单里的「所属钉钉」需要与此处的架构名称一致。</div>
-  </div>
-
-  <!-- 名单 -->
+  <!-- 名单管理 -->
   <div class="card tab-panel hide" id="panel-stu">
-    <div class="card-title">学员名单（当前批次：<span id="stuBatchTag"></span>）</div>
-    <div class="dropzone" id="dropzone">拖入名单文件到这里，或点击选择<br><span style="font-size:12px;">支持 .xlsx / .csv，自动提取「姓名」和「所属钉钉」两列</span></div>
-    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" class="hide">
-    <div class="toolbar" style="margin-top:8px;">
-      <button class="btn btn-ghost" id="addStuBtn" type="button">+ 添加一行</button>
-      <button class="btn btn-ghost" id="clearStuBtn" type="button">清空名单</button>
-      <button class="btn" id="saveStuBtn" type="button">保存名单</button>
+    <div class="card-title">名单管理</div>
+    <div class="tip">
+      拖入 Excel/CSV 文件，自动提取「姓名」和「所属钉钉」两列。导入后自动模糊匹配架构，匹配不上的会标红提示。
     </div>
-    <div class="tip" id="importMsg"></div>
-    <div style="overflow-x:auto;">
-      <table>
-        <thead><tr><th style="width:40%;">姓名</th><th style="width:40%;">所属钉钉（架构）</th><th style="width:70px;"></th></tr></thead>
+    <div class="drop-zone" id="dropZone">
+      点击或拖入 Excel/CSV 文件导入名单<br>
+      <span style="font-size:11px">（需包含「姓名」和「所属钉钉」两列）</span>
+    </div>
+    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none">
+    <div class="toolbar">
+      <button class="btn btn-primary btn-sm" id="addStuBtn" type="button">+ 添加一行</button>
+      <button class="btn btn-ghost btn-sm" id="exportStuBtn" type="button">导出名单</button>
+      <button class="btn btn-danger btn-sm" id="clearStuBtn" type="button">一键清空</button>
+      <button class="btn btn-ghost btn-sm" id="rematchBtn" type="button">重新匹配架构</button>
+    </div>
+    <div class="stats-row" id="stuStats"></div>
+    <div style="overflow-x:auto">
+      <table class="stu-table">
+        <thead>
+          <tr><th style="width:40px">#</th><th>姓名</th><th>所属钉钉</th><th>匹配架构</th><th style="width:80px">操作</th></tr>
+        </thead>
         <tbody id="stuTable"></tbody>
       </table>
     </div>
@@ -335,54 +215,22 @@
 
   <!-- 签到情况 -->
   <div class="card tab-panel hide" id="panel-check">
-    <div class="card-title">签到情况（当前批次：<span id="checkBatchTag"></span>）</div>
-    <div class="stat-grid">
-      <div class="stat"><div class="num" id="stTotal">0</div><div class="lab">应签到总人数</div></div>
-      <div class="stat"><div class="num" id="stDone" style="color:var(--ok);">0</div><div class="lab">已签到</div></div>
-      <div class="stat"><div class="num" id="stMiss" style="color:var(--warn);">0</div><div class="lab">未签到</div></div>
-    </div>
-    <div id="syncNote" class="tip"></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;">
-      <button class="btn btn-ghost btn-sm" id="refreshCheckBtn" type="button">刷新</button>
-      <button class="btn btn-sm" id="exportBtn" type="button">导出签到表 (CSV)</button>
-    </div>
-    <div class="card-title" style="font-size:13px;">未签到</div>
-    <div class="chk-list" id="missList"></div>
-    <div class="card-title" style="font-size:13px;margin-top:14px;">已签到</div>
-    <div class="chk-list" id="doneList"></div>
-  </div>
-
-  <!-- 设置 -->
-  <div class="card tab-panel hide" id="panel-setting">
-    <div class="tip">管理员密码固定为 <b>0288</b>。</div>
-
-    <div style="height:18px;"></div>
-    <div class="card-title">配置导出与部署</div>
+    <div class="card-title">签到情况</div>
     <div class="tip">
-      学员扫码后会自动从网站加载最新的架构和名单配置。<br>
-      每次修改批次、架构或名单后，请点击下方按钮导出配置文件，然后把下载的 <b>config.json</b> 上传到 GitHub 仓库根目录并推送。
+      显示名单中所有学员的签到状态。签到记录保存在本机浏览器，可导出 CSV 备份。
     </div>
     <div class="toolbar">
-      <button class="btn" id="exportConfigBtn" type="button">导出配置文件 (config.json)</button>
+      <button class="btn btn-ghost btn-sm" id="refreshCheckBtn" type="button">刷新</button>
+      <button class="btn btn-primary btn-sm" id="exportCheckBtn" type="button">导出签到表 (CSV)</button>
     </div>
-    <div class="tip" id="exportMsg"></div>
-
-    <div style="height:18px;"></div>
-    <div class="card-title">部署步骤</div>
-    <div class="tip" style="line-height:1.8;">
-      1. 在「批次管理」中配置好入职日期、架构、名单<br>
-      2. 点击上方「导出配置文件」按钮，下载 config.json<br>
-      3. 把 config.json 放到 GitHub 仓库 sign-in 目录下<br>
-      4. 执行 git add config.json && git commit -m "update config" && git push<br>
-      5. 等待 1-2 分钟，学员扫码即可看到最新配置
-    </div>
-
-    <div style="height:18px;"></div>
-    <div class="card-title">签到记录说明</div>
-    <div class="tip">
-      本方案不使用云数据库，签到记录保存在学员各自的手机浏览器中。<br>
-      学员签到成功后会显示签到凭证（姓名、架构、时间），可截图发到群里核对。<br>
-      管理员可在「签到统计」中导出签到名单模板，现场人工核对。
+    <div class="stats-row" id="checkStats"></div>
+    <div style="overflow-x:auto">
+      <table class="stu-table">
+        <thead>
+          <tr><th style="width:40px">#</th><th>姓名</th><th>所属钉钉</th><th>匹配架构</th><th>签到时间</th><th>状态</th></tr>
+        </thead>
+        <tbody id="checkTable"></tbody>
+      </table>
     </div>
   </div>
 </div>
@@ -395,49 +243,10 @@
 <div id="toast"></div>
 
 <script>
-/* qrcodejs 1.0.0 内嵌（离线可用，无需外网） */
-var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this.parsedData=[];for(var b=[],d=0,e=this.data.length;e>d;d++){var f=this.data.charCodeAt(d);f>65536?(b[0]=240|(1835008&f)>>>18,b[1]=128|(258048&f)>>>12,b[2]=128|(4032&f)>>>6,b[3]=128|63&f):f>2048?(b[0]=224|(61440&f)>>>12,b[1]=128|(4032&f)>>>6,b[2]=128|63&f):f>128?(b[0]=192|(1984&f)>>>6,b[1]=128|63&f):b[0]=f,this.parsedData=this.parsedData.concat(b)}this.parsedData.length!=this.data.length&&(this.parsedData.unshift(191),this.parsedData.unshift(187),this.parsedData.unshift(239))}function b(a,b){this.typeNumber=a,this.errorCorrectLevel=b,this.modules=null,this.moduleCount=0,this.dataCache=null,this.dataList=[]}function i(a,b){if(void 0==a.length)throw new Error(a.length+"/"+b);for(var c=0;c<a.length&&0==a[c];)c++;this.num=new Array(a.length-c+b);for(var d=0;d<a.length-c;d++)this.num[d]=a[d+c]}function j(a,b){this.totalCount=a,this.dataCount=b}function k(){this.buffer=[],this.length=0}function m(){return"undefined"!=typeof CanvasRenderingContext2D}function n(){var a=!1,b=navigator.userAgent;return/android/i.test(b)&&(a=!0,aMat=b.toString().match(/android ([0-9]\.[0-9])/i),aMat&&aMat[1]&&(a=parseFloat(aMat[1]))),a}function r(a,b){for(var c=1,e=s(a),f=0,g=l.length;g>=f;f++){var h=0;switch(b){case d.L:h=l[f][0];break;case d.M:h=l[f][1];break;case d.Q:h=l[f][2];break;case d.H:h=l[f][3]}if(h>=e)break;c++}if(c>l.length)throw new Error("Too long data");return c}function s(a){var b=encodeURI(a).toString().replace(/\%[0-9a-fA-F]{2}/g,"a");return b.length+(b.length!=a?3:0)}a.prototype={getLength:function(){return this.parsedData.length},write:function(a){for(var b=0,c=this.parsedData.length;c>b;b++)a.put(this.parsedData[b],8)}},b.prototype={addData:function(b){var c=new a(b);this.dataList.push(c),this.dataCache=null},isDark:function(a,b){if(0>a||this.moduleCount<=a||0>b||this.moduleCount<=b)throw new Error(a+","+b);return this.modules[a][b]},getModuleCount:function(){return this.moduleCount},make:function(){this.makeImpl(!1,this.getBestMaskPattern())},makeImpl:function(a,c){this.moduleCount=4*this.typeNumber+17,this.modules=new Array(this.moduleCount);for(var d=0;d<this.moduleCount;d++){this.modules[d]=new Array(this.moduleCount);for(var e=0;e<this.moduleCount;e++)this.modules[d][e]=null}this.setupPositionProbePattern(0,0),this.setupPositionProbePattern(this.moduleCount-7,0),this.setupPositionProbePattern(0,this.moduleCount-7),this.setupPositionAdjustPattern(),this.setupTimingPattern(),this.setupTypeInfo(a,c),this.typeNumber>=7&&this.setupTypeNumber(a),null==this.dataCache&&(this.dataCache=b.createData(this.typeNumber,this.errorCorrectLevel,this.dataList)),this.mapData(this.dataCache,c)},setupPositionProbePattern:function(a,b){for(var c=-1;7>=c;c++)if(!(-1>=a+c||this.moduleCount<=a+c))for(var d=-1;7>=d;d++)-1>=b+d||this.moduleCount<=b+d||(this.modules[a+c][b+d]=c>=0&&6>=c&&(0==d||6==d)||d>=0&&6>=d&&(0==c||6==c)||c>=2&&4>=c&&d>=2&&4>=d?!0:!1)},getBestMaskPattern:function(){for(var a=0,b=0,c=0;8>c;c++){this.makeImpl(!0,c);var d=f.getLostPoint(this);(0==c||a>d)&&(a=d,b=c)}return b},createMovieClip:function(a,b,c){var d=a.createEmptyMovieClip(b,c),e=1;this.make();for(var f=0;f<this.modules.length;f++)for(var g=f*e,h=0;h<this.modules[f].length;h++){var i=h*e,j=this.modules[f][h];j&&(d.beginFill(0,100),d.moveTo(i,g),d.lineTo(i+e,g),d.lineTo(i+e,g+e),d.lineTo(i,g+e),d.endFill())}return d},setupTimingPattern:function(){for(var a=8;a<this.moduleCount-8;a++)null==this.modules[a][6]&&(this.modules[a][6]=0==a%2);for(var b=8;b<this.moduleCount-8;b++)null==this.modules[6][b]&&(this.modules[6][b]=0==b%2)},setupPositionAdjustPattern:function(){for(var a=f.getPatternPosition(this.typeNumber),b=0;b<a.length;b++)for(var c=0;c<a.length;c++){var d=a[b],e=a[c];if(null==this.modules[d][e])for(var g=-2;2>=g;g++)for(var h=-2;2>=h;h++)this.modules[d+g][e+h]=-2==g||2==g||-2==h||2==h||0==g&&0==h?!0:!1}},setupTypeNumber:function(a){for(var b=f.getBCHTypeNumber(this.typeNumber),c=0;18>c;c++){var d=!a&&1==(1&b>>c);this.modules[Math.floor(c/3)][c%3+this.moduleCount-8-3]=d}for(var c=0;18>c;c++){var d=!a&&1==(1&b>>c);this.modules[c%3+this.moduleCount-8-3][Math.floor(c/3)]=d}},setupTypeInfo:function(a,b){for(var c=this.errorCorrectLevel<<3|b,d=f.getBCHTypeInfo(c),e=0;15>e;e++){var g=!a&&1==(1&d>>e);6>e?this.modules[e][8]=g:8>e?this.modules[e+1][8]=g:this.modules[this.moduleCount-15+e][8]=g}for(var e=0;15>e;e++){var g=!a&&1==(1&d>>e);8>e?this.modules[8][this.moduleCount-e-1]=g:9>e?this.modules[8][15-e-1+1]=g:this.modules[8][15-e-1]=g}this.modules[this.moduleCount-8][8]=!a},mapData:function(a,b){for(var c=-1,d=this.moduleCount-1,e=7,g=0,h=this.moduleCount-1;h>0;h-=2)for(6==h&&h--;;){for(var i=0;2>i;i++)if(null==this.modules[d][h-i]){var j=!1;g<a.length&&(j=1==(1&a[g]>>>e));var k=f.getMask(b,d,h-i);k&&(j=!j),this.modules[d][h-i]=j,e--,-1==e&&(g++,e=7)}if(d+=c,0>d||this.moduleCount<=d){d-=c,c=-c;break}}}},b.PAD0=236,b.PAD1=17,b.createData=function(a,c,d){for(var e=j.getRSBlocks(a,c),g=new k,h=0;h<d.length;h++){var i=d[h];g.put(i.mode,4),g.put(i.getLength(),f.getLengthInBits(i.mode,a)),i.write(g)}for(var l=0,h=0;h<e.length;h++)l+=e[h].dataCount;if(g.getLengthInBits()>8*l)throw new Error("code length overflow. ("+g.getLengthInBits()+">"+8*l+")");for(g.getLengthInBits()+4<=8*l&&g.put(0,4);0!=g.getLengthInBits()%8;)g.putBit(!1);for(;;){if(g.getLengthInBits()>=8*l)break;if(g.put(b.PAD0,8),g.getLengthInBits()>=8*l)break;g.put(b.PAD1,8)}return b.createBytes(g,e)},b.createBytes=function(a,b){for(var c=0,d=0,e=0,g=new Array(b.length),h=new Array(b.length),j=0;j<b.length;j++){var k=b[j].dataCount,l=b[j].totalCount-k;d=Math.max(d,k),e=Math.max(e,l),g[j]=new Array(k);for(var m=0;m<g[j].length;m++)g[j][m]=255&a.buffer[m+c];c+=k;var n=f.getErrorCorrectPolynomial(l),o=new i(g[j],n.getLength()-1),p=o.mod(n);h[j]=new Array(n.getLength()-1);for(var m=0;m<h[j].length;m++){var q=m+p.getLength()-h[j].length;h[j][m]=q>=0?p.get(q):0}}for(var r=0,m=0;m<b.length;m++)r+=b[m].totalCount;for(var s=new Array(r),t=0,m=0;d>m;m++)for(var j=0;j<b.length;j++)m<g[j].length&&(s[t++]=g[j][m]);for(var m=0;e>m;m++)for(var j=0;j<b.length;j++)m<h[j].length&&(s[t++]=h[j][m]);return s};for(var c={MODE_NUMBER:1,MODE_ALPHA_NUM:2,MODE_8BIT_BYTE:4,MODE_KANJI:8},d={L:1,M:0,Q:3,H:2},e={PATTERN000:0,PATTERN001:1,PATTERN010:2,PATTERN011:3,PATTERN100:4,PATTERN101:5,PATTERN110:6,PATTERN111:7},f={PATTERN_POSITION_TABLE:[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],G15:1335,G18:7973,G15_MASK:21522,getBCHTypeInfo:function(a){for(var b=a<<10;f.getBCHDigit(b)-f.getBCHDigit(f.G15)>=0;)b^=f.G15<<f.getBCHDigit(b)-f.getBCHDigit(f.G15);return(a<<10|b)^f.G15_MASK},getBCHTypeNumber:function(a){for(var b=a<<12;f.getBCHDigit(b)-f.getBCHDigit(f.G18)>=0;)b^=f.G18<<f.getBCHDigit(b)-f.getBCHDigit(f.G18);return a<<12|b},getBCHDigit:function(a){for(var b=0;0!=a;)b++,a>>>=1;return b},getPatternPosition:function(a){return f.PATTERN_POSITION_TABLE[a-1]},getMask:function(a,b,c){switch(a){case e.PATTERN000:return 0==(b+c)%2;case e.PATTERN001:return 0==b%2;case e.PATTERN010:return 0==c%3;case e.PATTERN011:return 0==(b+c)%3;case e.PATTERN100:return 0==(Math.floor(b/2)+Math.floor(c/3))%2;case e.PATTERN101:return 0==b*c%2+b*c%3;case e.PATTERN110:return 0==(b*c%2+b*c%3)%2;case e.PATTERN111:return 0==(b*c%3+(b+c)%2)%2;default:throw new Error("bad maskPattern:"+a)}},getErrorCorrectPolynomial:function(a){for(var b=new i([1],0),c=0;a>c;c++)b=b.multiply(new i([1,g.gexp(c)],0));return b},getLengthInBits:function(a,b){if(b>=1&&10>b)switch(a){case c.MODE_NUMBER:return 10;case c.MODE_ALPHA_NUM:return 9;case c.MODE_8BIT_BYTE:return 8;case c.MODE_KANJI:return 8;default:throw new Error("mode:"+a)}else if(27>b)switch(a){case c.MODE_NUMBER:return 12;case c.MODE_ALPHA_NUM:return 11;case c.MODE_8BIT_BYTE:return 16;case c.MODE_KANJI:return 10;default:throw new Error("mode:"+a)}else{if(!(41>b))throw new Error("type:"+b);switch(a){case c.MODE_NUMBER:return 14;case c.MODE_ALPHA_NUM:return 13;case c.MODE_8BIT_BYTE:return 16;case c.MODE_KANJI:return 12;default:throw new Error("mode:"+a)}}},getLostPoint:function(a){for(var b=a.getModuleCount(),c=0,d=0;b>d;d++)for(var e=0;b>e;e++){for(var f=0,g=a.isDark(d,e),h=-1;1>=h;h++)if(!(0>d+h||d+h>=b))for(var i=-1;1>=i;i++)0>e+i||e+i>=b||(0!=h||0!=i)&&g==a.isDark(d+h,e+i)&&f++;f>5&&(c+=3+f-5)}for(var d=0;b-1>d;d++)for(var e=0;b-1>e;e++){var j=0;a.isDark(d,e)&&j++,a.isDark(d+1,e)&&j++,a.isDark(d,e+1)&&j++,a.isDark(d+1,e+1)&&j++,(0==j||4==j)&&(c+=3)}for(var d=0;b>d;d++)for(var e=0;b-6>e;e++)a.isDark(d,e)&&!a.isDark(d,e+1)&&a.isDark(d,e+2)&&a.isDark(d,e+3)&&a.isDark(d,e+4)&&!a.isDark(d,e+5)&&a.isDark(d,e+6)&&(c+=40);for(var e=0;b>e;e++)for(var d=0;b-6>d;d++)a.isDark(d,e)&&!a.isDark(d+1,e)&&a.isDark(d+2,e)&&a.isDark(d+3,e)&&a.isDark(d+4,e)&&!a.isDark(d+5,e)&&a.isDark(d+6,e)&&(c+=40);for(var k=0,e=0;b>e;e++)for(var d=0;b>d;d++)a.isDark(d,e)&&k++;var l=Math.abs(100*k/b/b-50)/5;return c+=10*l}},g={glog:function(a){if(1>a)throw new Error("glog("+a+")");return g.LOG_TABLE[a]},gexp:function(a){for(;0>a;)a+=255;for(;a>=256;)a-=255;return g.EXP_TABLE[a]},EXP_TABLE:new Array(256),LOG_TABLE:new Array(256)},h=0;8>h;h++)g.EXP_TABLE[h]=1<<h;for(var h=8;256>h;h++)g.EXP_TABLE[h]=g.EXP_TABLE[h-4]^g.EXP_TABLE[h-5]^g.EXP_TABLE[h-6]^g.EXP_TABLE[h-8];for(var h=0;255>h;h++)g.LOG_TABLE[g.EXP_TABLE[h]]=h;i.prototype={get:function(a){return this.num[a]},getLength:function(){return this.num.length},multiply:function(a){for(var b=new Array(this.getLength()+a.getLength()-1),c=0;c<this.getLength();c++)for(var d=0;d<a.getLength();d++)b[c+d]^=g.gexp(g.glog(this.get(c))+g.glog(a.get(d)));return new i(b,0)},mod:function(a){if(this.getLength()-a.getLength()<0)return this;for(var b=g.glog(this.get(0))-g.glog(a.get(0)),c=new Array(this.getLength()),d=0;d<this.getLength();d++)c[d]=this.get(d);for(var d=0;d<a.getLength();d++)c[d]^=g.gexp(g.glog(a.get(d))+b);return new i(c,0).mod(a)}},j.RS_BLOCK_TABLE=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],j.getRSBlocks=function(a,b){var c=j.getRsBlockTable(a,b);if(void 0==c)throw new Error("bad rs block @ typeNumber:"+a+"/errorCorrectLevel:"+b);for(var d=c.length/3,e=[],f=0;d>f;f++)for(var g=c[3*f+0],h=c[3*f+1],i=c[3*f+2],k=0;g>k;k++)e.push(new j(h,i));return e},j.getRsBlockTable=function(a,b){switch(b){case d.L:return j.RS_BLOCK_TABLE[4*(a-1)+0];case d.M:return j.RS_BLOCK_TABLE[4*(a-1)+1];case d.Q:return j.RS_BLOCK_TABLE[4*(a-1)+2];case d.H:return j.RS_BLOCK_TABLE[4*(a-1)+3];default:return void 0}},k.prototype={get:function(a){var b=Math.floor(a/8);return 1==(1&this.buffer[b]>>>7-a%8)},put:function(a,b){for(var c=0;b>c;c++)this.putBit(1==(1&a>>>b-c-1))},getLengthInBits:function(){return this.length},putBit:function(a){var b=Math.floor(this.length/8);this.buffer.length<=b&&this.buffer.push(0),a&&(this.buffer[b]|=128>>>this.length%8),this.length++}};var l=[[17,14,11,7],[32,26,20,14],[53,42,32,24],[78,62,46,34],[106,84,60,44],[134,106,74,58],[154,122,86,64],[192,152,108,84],[230,180,130,98],[271,213,151,119],[321,251,177,137],[367,287,203,155],[425,331,241,177],[458,362,258,194],[520,412,292,220],[586,450,322,250],[644,504,364,280],[718,560,394,310],[792,624,442,338],[858,666,482,382],[929,711,509,403],[1003,779,565,439],[1091,857,611,461],[1171,911,661,511],[1273,997,715,535],[1367,1059,751,593],[1465,1125,805,625],[1528,1190,868,658],[1628,1264,908,698],[1732,1370,982,742],[1840,1452,1030,790],[1952,1538,1112,842],[2068,1628,1168,898],[2188,1722,1228,958],[2303,1809,1283,983],[2431,1911,1351,1051],[2563,1989,1423,1093],[2699,2099,1499,1139],[2809,2213,1579,1219],[2953,2331,1663,1273]],o=function(){var a=function(a,b){this._el=a,this._htOption=b};return a.prototype.draw=function(a){function g(a,b){var c=document.createElementNS("http://www.w3.org/2000/svg",a);for(var d in b)b.hasOwnProperty(d)&&c.setAttribute(d,b[d]);return c}var b=this._htOption,c=this._el,d=a.getModuleCount();Math.floor(b.width/d),Math.floor(b.height/d),this.clear();var h=g("svg",{viewBox:"0 0 "+String(d)+" "+String(d),width:"100%",height:"100%",fill:b.colorLight});h.setAttributeNS("http://www.w3.org/2000/xmlns/","xmlns:xlink","http://www.w3.org/1999/xlink"),c.appendChild(h),h.appendChild(g("rect",{fill:b.colorDark,width:"1",height:"1",id:"template"}));for(var i=0;d>i;i++)for(var j=0;d>j;j++)if(a.isDark(i,j)){var k=g("use",{x:String(i),y:String(j)});k.setAttributeNS("http://www.w3.org/1999/xlink","href","#template"),h.appendChild(k)}},a.prototype.clear=function(){for(;this._el.hasChildNodes();)this._el.removeChild(this._el.lastChild)},a}(),p="svg"===document.documentElement.tagName.toLowerCase(),q=p?o:m()?function(){function a(){this._elImage.src=this._elCanvas.toDataURL("image/png"),this._elImage.style.display="block",this._elCanvas.style.display="none"}function d(a,b){var c=this;if(c._fFail=b,c._fSuccess=a,null===c._bSupportDataURI){var d=document.createElement("img"),e=function(){c._bSupportDataURI=!1,c._fFail&&_fFail.call(c)},f=function(){c._bSupportDataURI=!0,c._fSuccess&&c._fSuccess.call(c)};return d.onabort=e,d.onerror=e,d.onload=f,d.src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",void 0}c._bSupportDataURI===!0&&c._fSuccess?c._fSuccess.call(c):c._bSupportDataURI===!1&&c._fFail&&c._fFail.call(c)}if(this._android&&this._android<=2.1){var b=1/window.devicePixelRatio,c=CanvasRenderingContext2D.prototype.drawImage;CanvasRenderingContext2D.prototype.drawImage=function(a,d,e,f,g,h,i,j){if("nodeName"in a&&/img/i.test(a.nodeName))for(var l=arguments.length-1;l>=1;l--)arguments[l]=arguments[l]*b;else"undefined"==typeof j&&(arguments[1]*=b,arguments[2]*=b,arguments[3]*=b,arguments[4]*=b);c.apply(this,arguments)}}var e=function(a,b){this._bIsPainted=!1,this._android=n(),this._htOption=b,this._elCanvas=document.createElement("canvas"),this._elCanvas.width=b.width,this._elCanvas.height=b.height,a.appendChild(this._elCanvas),this._el=a,this._oContext=this._elCanvas.getContext("2d"),this._bIsPainted=!1,this._elImage=document.createElement("img"),this._elImage.style.display="none",this._el.appendChild(this._elImage),this._bSupportDataURI=null};return e.prototype.draw=function(a){var b=this._elImage,c=this._oContext,d=this._htOption,e=a.getModuleCount(),f=d.width/e,g=d.height/e,h=Math.round(f),i=Math.round(g);b.style.display="none",this.clear();for(var j=0;e>j;j++)for(var k=0;e>k;k++){var l=a.isDark(j,k),m=k*f,n=j*g;c.strokeStyle=l?d.colorDark:d.colorLight,c.lineWidth=1,c.fillStyle=l?d.colorDark:d.colorLight,c.fillRect(m,n,f,g),c.strokeRect(Math.floor(m)+.5,Math.floor(n)+.5,h,i),c.strokeRect(Math.ceil(m)-.5,Math.ceil(n)-.5,h,i)}this._bIsPainted=!0},e.prototype.makeImage=function(){this._bIsPainted&&d.call(this,a)},e.prototype.isPainted=function(){return this._bIsPainted},e.prototype.clear=function(){this._oContext.clearRect(0,0,this._elCanvas.width,this._elCanvas.height),this._bIsPainted=!1},e.prototype.round=function(a){return a?Math.floor(1e3*a)/1e3:a},e}():function(){var a=function(a,b){this._el=a,this._htOption=b};return a.prototype.draw=function(a){for(var b=this._htOption,c=this._el,d=a.getModuleCount(),e=Math.floor(b.width/d),f=Math.floor(b.height/d),g=['<table style="border:0;border-collapse:collapse;">'],h=0;d>h;h++){g.push("<tr>");for(var i=0;d>i;i++)g.push('<td style="border:0;border-collapse:collapse;padding:0;margin:0;width:'+e+"px;height:"+f+"px;background-color:"+(a.isDark(h,i)?b.colorDark:b.colorLight)+';"></td>');g.push("</tr>")}g.push("</table>"),c.innerHTML=g.join("");var j=c.childNodes[0],k=(b.width-j.offsetWidth)/2,l=(b.height-j.offsetHeight)/2;k>0&&l>0&&(j.style.margin=l+"px "+k+"px")},a.prototype.clear=function(){this._el.innerHTML=""},a}();QRCode=function(a,b){if(this._htOption={width:256,height:256,typeNumber:4,colorDark:"#000000",colorLight:"#ffffff",correctLevel:d.H},"string"==typeof b&&(b={text:b}),b)for(var c in b)this._htOption[c]=b[c];"string"==typeof a&&(a=document.getElementById(a)),this._android=n(),this._el=a,this._oQRCode=null,this._oDrawing=new q(this._el,this._htOption),this._htOption.text&&this.makeCode(this._htOption.text)},QRCode.prototype.makeCode=function(a){this._oQRCode=new b(r(a,this._htOption.correctLevel),this._htOption.correctLevel),this._oQRCode.addData(a),this._oQRCode.make(),this._el.title=a,this._oDrawing.draw(this._oQRCode),this.makeImage()},QRCode.prototype.makeImage=function(){"function"==typeof this._oDrawing.makeImage&&(!this._android||this._android>=3)&&this._oDrawing.makeImage()},QRCode.prototype.clear=function(){this._oDrawing.clear()},QRCode.CorrectLevel=d}();
+/* qrcodejs 内嵌 */
+var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this.parsedData=[];for(var b=[],d=0,e=this.data.length;e>d;d++){var f=this.data.charCodeAt(d);f>65536?(b[0]=240|(1835008&f)>>>18,b[1]=128|(258048&f)>>>12,b[2]=128|(4032&f)>>>6,b[3]=128|63&f):f>2048?(b[0]=224|(61440&f)>>>12,b[1]=128|(4032&f)>>>6,b[2]=128|63&f):f>128?(b[0]=192|(1984&f)>>>6,b[1]=128|63&f):b[0]=f,this.parsedData=this.parsedData.concat(b)}this.parsedData.length!=this.data.length&&(this.parsedData.unshift(191),this.parsedData.unshift(187),this.parsedData.unshift(239))}function b(a,b){this.typeNumber=a,this.errorCorrectLevel=b,this.modules=null,this.moduleCount=0,this.dataCache=null,this.dataList=[]}function i(a,b){if(void 0==a.length)throw new Error(a.length+"/"+b);for(var c=0;c<a.length&&0==a[c];)c++;this.num=new Array(a.length-c+b);for(var d=0;d<a.length-c;d++)this.num[d]=a[d+c]}function j(a,b){this.totalCount=a,this.dataCount=b}function k(){this.buffer=[],this.length=0}function m(){return"undefined"!=typeof CanvasRenderingContext2D}function n(){var a=!1,b=navigator.userAgent;return/android/i.test(b)&&(a=!0,aMat=b.toString().match(/android ([0-9]\.[0-9])/i),aMat&&aMat[1]&&(a=parseFloat(aMat[1]))),a}function r(a,b){for(var c=1,e=s(a),f=0,g=l.length;g>=f;f++){var h=0;switch(b){case d.L:h=l[f][0];break;case d.M:h=l[f][1];break;case d.Q:h=l[f][2];break;case d.H:h=l[f][3]}if(h>=e)break;c++}if(c>l.length)throw new Error("Too long data");return c}function s(a){var b=encodeURI(a).toString().replace(/\%[0-9a-fA-F]{2}/g,"a");return b.length+(b.length!=a?3:0)}a.prototype={getLength:function(){return this.parsedData.length},write:function(a){for(var b=0,c=this.parsedData.length;c>b;b++)a.put(this.parsedData[b],8)}},b.prototype={addData:function(b){var c=new a(b);this.dataList.push(c),this.dataCache=null},isDark:function(a,b){if(0>a||this.moduleCount<=a||0>b||this.moduleCount<=b)throw new Error(a+","+b);return this.modules[a][b]},getModuleCount:function(){return this.moduleCount},make:function(){this.makeImpl(!1,this.getBestMaskPattern())},makeImpl:function(a,c){this.moduleCount=4*this.typeNumber+17,this.modules=new Array(this.moduleCount);for(var d=0;d<this.moduleCount;d++){this.modules[d]=new Array(this.moduleCount);for(var e=0;e<this.moduleCount;e++)this.modules[d][e]=null}this.setupPositionProbePattern(0,0),this.setupPositionProbePattern(this.moduleCount-7,0),this.setupPositionProbePattern(0,this.moduleCount-7),this.setupAdjustPattern(),this.setupTimingPattern(),this.setupTypeInfo(a,c),this.typeNumber>=7&&this.setupTypeNumber(a),null==this.dataCache&&(this.dataCache=b.createData(this.typeNumber,this.errorCorrectLevel,this.dataList)),this.mapData(this.dataCache,c)},setupPositionProbePattern:function(a,b){for(var c=-1;7>=c;c++)if(!(-1>=a+c||this.moduleCount<=a+c))for(var d=-1;7>=d;d++)-1>=b+d||this.moduleCount<=b+d||(this.modules[a+c][b+d]=c>=0&&6>=c&&(0==d||6==d)||d>=0&&6>=d&&(0==c||6==c)||c>=2&&4>=c&&d>=2&&4>=c?!0:!1)},getBestMaskPattern:function(){for(var a=0,b=0,c=0;8>c;c++){this.makeImpl(!0,c);var d=f.getLostPoint(this);(0==c||a>d)&&(a=d,b=c)}return b},createMovieClip:function(a,b,c){var d=a.createEmptyMovieClip(b,c),e=1;this.make();for(var f=0;f<this.modules.length;f++)for(var g=f*e,h=0;h<this.modules[f].length;h++){var i=h*e,j=this.modules[f][h];j&&(d.beginFill(0,100),d.moveTo(i,g),d.lineTo(i+e,g),d.lineTo(i+e,g+e),d.lineTo(i,g+e),d.endFill())}return d},setupTimingPattern:function(){for(var a=8;a<this.moduleCount-8;a++)null==this.modules[a][6]&&(this.modules[a][6]=0==a%2);for(var b=8;b<this.moduleCount-8;b++)null==this.modules[6][b]&&(this.modules[6][b]=0==b%2)},setupAdjustPattern:function(){for(var a=f.getPatternPosition(this.typeNumber),b=0;b<a.length;b++)for(var c=0;c<a.length;c++){var d=a[b],e=a[c];if(null==this.modules[d][e])for(var g=-2;2>=g;g++)for(var h=-2;2>=h;h++)this.modules[d+g][e+h]=-2==g||2==g||-2==h||2==h||0==g&&0==h?!0:!1}},setupTypeNumber:function(a){for(var b=f.getBCHTypeNumber(this.typeNumber),c=0;18>c;c++){var d=!a&&1==(1&b>>c);this.modules[Math.floor(c/3)][c%3+this.moduleCount-8-3]=d}for(var c=0;18>c;c++){var d=!a&&1==(1&b>>c);this.modules[c%3+this.moduleCount-8-3][Math.floor(c/3)]=d}},setupTypeInfo:function(a,b){for(var c=this.errorCorrectLevel<<3|b,d=f.getBCHTypeInfo(c),e=0;15>e;e++){var g=!a&&1==(1&d>>e);6>e?this.modules[e][8]=g:8>e?this.modules[e+1][8]=g:this.modules[this.moduleCount-15+e][8]=g}for(var e=0;15>e;e++){var g=!a&&1==(1&d>>e);8>e?this.modules[8][this.moduleCount-e-1]=g:9>e?this.modules[8][15-e-1+1]=g:this.modules[8][15-e-1]=g}this.modules[this.moduleCount-8][8]=!a},mapData:function(a,b){for(var c=-1,d=this.moduleCount-1,e=7,g=0,h=this.moduleCount-1;h>0;h-=2)for(6==h&&h--;;){for(var i=0;2>i;i++)if(null==this.modules[d][h-i]){var j=!1;g<a.length&&(j=1==(1&a[g]>>>e));var k=f.getMask(b,d,h-i);k&&(j=!j),this.modules[d][h-i]=j,e--,-1==e&&(g++,e=7)}if(d+=c,0>d||this.moduleCount<=d){d-=c,c=-c;break}}}},b.PAD0=236,b.PAD1=17,b.createData=function(a,c,d){for(var e=j.getRSBlocks(a,c),g=new k,h=0;h<d.length;h++){var i=d[h];g.put(i.mode,4),g.put(i.getLength(),f.getLengthInBits(i.mode,a)),i.write(g)}for(var l=0,h=0;h<e.length;h++)l+=e[h].dataCount;if(g.getLengthInBits()>8*l)throw new Error("code length overflow. ("+g.getLengthInBits()+">"+8*l+")");for(g.getLengthInBits()+4<=8*l&&g.put(0,4);0!=g.getLengthInBits()%8;)g.putBit(!1);for(;;){if(g.getLengthInBits()>=8*l)break;if(g.put(b.PAD0,8),g.getLengthInBits()>=8*l)break;g.put(b.PAD1,8)}return b.createBytes(g,e)},b.createBytes=function(a,b){for(var c=0,d=0,e=0,g=new Array(b.length),h=new Array(b.length),j=0;j<b.length;j++){var k=b[j].dataCount,l=b[j].totalCount-k;d=Math.max(d,k),e=Math.max(e,l),g[j]=new Array(k);for(var m=0;m<g[j].length;m++)g[j][m]=255&a.buffer[m+c];c+=k;var n=f.getErrorCorrectPolynomial(l),o=new i(g[j],n.getLength()-1),p=o.mod(n);h[j]=new Array(n.getLength()-1);for(var m=0;m<h[j].length;m++){var q=m+p.getLength()-h[j].length;h[j][m]=q>=0?p.get(q):0}}for(var r=0,m=0;m<b.length;m++)r+=b[m].totalCount;for(var s=new Array(r),t=0,m=0;d>m;m++)for(var j=0;j<b.length;j++)m<g[j].length&&(s[t++]=g[j][m]);for(var m=0;e>m;m++)for(var j=0;j<b.length;j++)m<h[j].length&&(s[t++]=h[j][m]);return s};for(var c={MODE_NUMBER:1,MODE_ALPHA_NUM:2,MODE_8BIT_BYTE:4,MODE_KANJI:8},d={L:1,M:0,Q:3,H:2},e={PATTERN000:0,PATTERN001:1,PATTERN010:2,PATTERN011:3,PATTERN100:4,PATTERN101:5,PATTERN110:6,PATTERN111:7},f={PATTERN_POSITION_TABLE:[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,170]],G15:1335,G18:7973,G15_MASK:21522,getBCHTypeInfo:function(a){for(var b=a<<10;f.getBCHDigit(b)-f.getBCHDigit(f.G15)>=0;)b^=f.G15<<f.getBCHDigit(b)-f.getBCHDigit(f.G15);return(a<<10|b)^f.G15_MASK},getBCHTypeNumber:function(a){for(var b=a<<12;f.getBCHDigit(b)-f.getBCHDigit(f.G18)>=0;)b^=f.G18<<f.getBCHDigit(b)-f.getBCHDigit(f.G18);return a<<12|b},getBCHDigit:function(a){for(var b=0;0!=a;)b++,a>>>=1;return b},getPatternPosition:function(a){return f.PATTERN_POSITION_TABLE[a-1]},getMask:function(a,b,c){switch(a){case e.PATTERN000:return 0==(b+c)%2;case e.PATTERN001:return 0==b%2;case e.PATTERN010:return 0==c%3;case e.PATTERN011:return 0==(b+c)%3;case e.PATTERN100:return 0==(Math.floor(b/2)+Math.floor(c/3))%2;case e.PATTERN101:return 0==b*c%2+b*c%3;case e.PATTERN110:return 0==(b*c%2+b*c%3)%2;case e.PATTERN111:return 0==(b*c%3+(b+c)%2)%2;default:throw new Error("bad maskPattern:"+a)}},getErrorCorrectPolynomial:function(a){for(var b=new i([1],0),c=0;a>c;c++)b=b.multiply(new i([1,g.gexp(c)],0));return b},getLengthInBits:function(a,b){if(b>=1&&10>b)switch(a){case c.MODE_NUMBER:return 10;case c.MODE_ALPHA_NUM:return 9;case c.MODE_8BIT_BYTE:return 8;case c.MODE_KANJI:return 8;default:throw new Error("mode:"+a)}else if(27>b)switch(a){case c.MODE_NUMBER:return 12;case c.MODE_ALPHA_NUM:return 11;case c.MODE_8BIT_BYTE:return 16;case c.MODE_KANJI:return 10;default:throw new Error("mode:"+a)}else{if(!(41>b))throw new Error("type:"+b);switch(a){case c.MODE_NUMBER:return 14;case c.MODE_ALPHA_NUM:return 13;case c.MODE_8BIT_BYTE:return 16;case c.MODE_KANJI:return 12;default:throw new Error("mode:"+a)}}},getLostPoint:function(a){for(var b=a.getModuleCount(),c=0,d=0;b>d;d++)for(var e=0;b>e;e++){for(var f=0,g=a.isDark(d,e),h=-1;1>=h;h++)if(!(-1>=d+h||d+h>=b))for(var i=-1;1>=i;i++)0>e+i||e+i>=b||(0!=h||0!=i)&&g==a.isDark(d+h,e+i)&&f++;f>5&&(c+=3+f-5)}for(var d=0;b-1>d;d++)for(var e=0;b-1>e;e++){var j=0;a.isDark(d,e)&&j++,a.isDark(d+1,e)&&j++,a.isDark(d,e+1)&&j++,a.isDark(d+1,e+1)&&j++,(0==j||4==j)&&(c+=3)}for(var d=0;b>d;d++)for(var e=0;b-6>e;e++)a.isDark(d,e)&&!a.isDark(d,e+1)&&a.isDark(d,e+2)&&a.isDark(d,e+3)&&a.isDark(d,e+4)&&!a.isDark(d,e+5)&&a.isDark(d,e+6)&&(c+=40);for(var e=0;b>e;e++)for(var d=0;b-6>d;d++)a.isDark(d,e)&&!a.isDark(d+1,e)&&a.isDark(d+2,e)&&a.isDark(d+3,e)&&a.isDark(d+4,e)&&!a.isDark(d+5,e)&&a.isDark(d+6,e)&&(c+=40);for(var k=0,e=0;b>e;e++)for(var d=0;b>d;d++)a.isDark(d,e)&&k++;var l=Math.abs(100*k/b/b-50)/5;return c+=10*l}},g={glog:function(a){if(1>a)throw new Error("glog("+a+")");return g.LOG_TABLE[a]},gexp:function(a){for(;0>a;)a+=255;for(;a>=256;)a-=256;return g.EXP_TABLE[a]},EXP_TABLE:new Array(256),LOG_TABLE:new Array(256)},h=0;8>h;h++)g.EXP_TABLE[h]=1<<h;for(var h=8;256>h;h++)g.EXP_TABLE[h]=g.EXP_TABLE[h-4]^g.EXP_TABLE[h-5]^g.EXP_TABLE[h-6]^g.EXP_TABLE[h-8];for(var h=0;255>h;h++)g.LOG_TABLE[g.EXP_TABLE[h]]=h;i.prototype={get:function(a){return this.num[a]},getLength:function(){return this.num.length},multiply:function(a){for(var b=new Array(this.getLength()+a.getLength()-1),c=0;c<this.getLength();c++)for(var d=0;d<a.getLength();d++)b[c+d]^=g.gexp(g.glog(this.get(c))+g.glog(a.get(d)));return new i(b,0)},mod:function(a){if(this.getLength()-a.getLength()<0)return this;for(var b=g.glog(this.get(0))-g.glog(a.get(0)),c=new Array(this.getLength()),d=0;d<this.getLength();d++)c[d]=this.get(d);for(var d=0;d<a.getLength();d++)c[d]^=g.gexp(g.glog(a.get(d))+b);return new i(c,0).mod(a)}},j.RS_BLOCK_TABLE=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,22,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,47],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],j.getRSBlocks=function(a,b){var c=j.getRsBlockTable(a,b);if(void 0==c)throw new Error("bad rs block @ typeNumber:"+a+"/errorCorrectLevel:"+b);for(var d=c.length/3,e=[],f=0;d>f;f++)for(var g=c[3*f+0],h=c[3*f+1],i=c[3*f+2],k=0;g>k;k++)e.push(new j(h,i));return e},j.getRsBlockTable=function(a,b){switch(b){case d.L:return j.RS_BLOCK_TABLE[4*(a-1)+0];case d.M:return j.RS_BLOCK_TABLE[4*(a-1)+1];case d.Q:return j.RS_BLOCK_TABLE[4*(a-1)+2];case d.H:return j.RS_BLOCK_TABLE[4*(a-1)+3];default:return void 0}},k.prototype={get:function(a){var b=Math.floor(a/8);return 1==(1&this.buffer[b]>>>7-a%8)},put:function(a,b){for(var c=0;b>c;c++)this.putBit(1==(1&a>>>b-c-1))},getLengthInBits:function(){return this.length},putBit:function(a){var b=Math.floor(this.length/8);this.buffer.length<=b&&this.buffer.push(0),a&&(this.buffer[b]|=128>>>this.length%8),this.length++}};var l=[[17,14,11,7],[32,26,20,14],[53,42,32,24],[78,62,46,34],[106,84,60,44],[134,106,74,58],[154,122,86,64],[192,152,108,84],[230,180,130,98],[271,213,151,119],[321,251,177,137],[367,287,203,155],[425,331,241,177],[458,362,258,194],[520,412,292,220],[586,450,322,250],[644,504,364,280],[718,560,394,310],[792,624,442,338],[858,666,482,382],[929,711,509,403],[1003,779,565,439],[1091,857,611,461],[1171,911,661,511],[1273,997,715,535],[1367,1059,751,593],[1465,1125,805,625],[1528,1190,868,658],[1628,1264,908,698],[1732,1370,982,742],[1840,1452,1030,790],[1952,1538,1112,842],[2068,1628,1168,898],[2188,1722,1228,958],[2303,1809,1283,983],[2431,1911,1351,1051],[2563,1989,1423,1093],[2699,2099,1499,1139],[2809,2213,1579,1219],[2953,2331,1663,1273]],o=function(){var a=function(a,b){this._el=a,this._htOption=b};return a.prototype.draw=function(a){function g(a,b){var c=document.createElementNS("http://www.w3.org/2000/svg",a);for(var d in b)b.hasOwnProperty(d)&&c.setAttribute(d,b[d]);return c}var b=this._htOption,c=this._el,d=a.getModuleCount();Math.floor(b.width/d),Math.floor(b.height/d),this.clear();var h=g("svg",{viewBox:"0 0 "+String(d)+" "+String(d),width:"100%",height:"100%",fill:b.colorLight});h.setAttributeNS("http://www.w3.org/2000/xmlns/","xmlns:xlink","http://www.w3.org/1999/xlink"),c.appendChild(h),h.appendChild(g("rect",{fill:b.colorDark,width:"1",height:"1",id:"template"}));for(var i=0;d>i;i++)for(var j=0;d>j;j++)if(a.isDark(i,j)){var k=g("use",{x:String(i),y:String(j)});k.setAttributeNS("http://www.w3.org/1999/xlink","href","#template"),h.appendChild(k)}},a.prototype.clear=function(){for(;this._el.hasChildNodes();)this._el.removeChild(this._el.lastChild)},a}(),p="svg"===document.documentElement.tagName.toLowerCase(),q=p?o:m()?function(){function a(){this._elImage.src=this._elCanvas.toDataURL("image/png"),this._elImage.style.display="block",this._elCanvas.style.display="none"}function d(a,b){var c=this;if(c._fFail=b,c._fSuccess=a,null===c._bSupportDataURI){var d=document.createElement("img"),e=function(){c._bSupportDataURI=!1,c._fFail&&_fFail.call(c)},f=function(){c._bSupportDataURI=!0,c._fSuccess&&c._fSuccess.call(c)};return d.onabort=e,d.onerror=e,d.onload=f,d.src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",void 0}c._bSupportDataURI===!0&&c._fSuccess?c._fSuccess.call(c):c._bSupportDataURI===!1&&c._fFail&&c._fFail.call(c)}if(this._android&&this._android<=2.1){var b=1/window.devicePixelRatio,c=CanvasRenderingContext2D.prototype.drawImage;CanvasRenderingContext2D.prototype.drawImage=function(a,d,e,f,g,h,i,j){if("nodeName"in a&&/img/i.test(a.nodeName))for(var l=arguments.length-1;l>=1;l--)arguments[l]=arguments[l]*b;else"undefined"==typeof j&&(arguments[1]*=b,arguments[2]*=b,arguments[3]*=b,arguments[4]*=b);c.apply(this,arguments)}}var e=function(a,b){this._bIsPainted=!1,this._android=n(),this._htOption=b,this._elCanvas=document.createElement("canvas"),this._elCanvas.width=b.width,this._elCanvas.height=b.height,a.appendChild(this._elCanvas),this._el=a,this._oContext=this._elCanvas.getContext("2d"),this._bIsPainted=!1,this._elImage=document.createElement("img"),this._elImage.style.display="none",this._el.appendChild(this._elImage),this._bSupportDataURI=null};return e.prototype.draw=function(a){var b=this._elImage,c=this._oContext,d=this._htOption,e=a.getModuleCount(),f=d.width/e,g=d.height/e,h=Math.round(f),i=Math.round(g);b.style.display="none",this.clear();for(var j=0;e>j;j++)for(var k=0;e>k;k++){var l=a.isDark(j,k),m=k*f,n=j*g;c.strokeStyle=l?d.colorDark:d.colorLight,c.lineWidth=1,c.fillStyle=l?d.colorDark:d.colorLight,c.fillRect(m,n,f,g),c.strokeRect(Math.floor(m)+.5,Math.floor(n)+.5,h,i),c.strokeRect(Math.ceil(m)-.5,Math.ceil(n)-.5,h,i)}this._bIsPainted=!0},e.prototype.makeImage=function(){this._bIsPainted&&d.call(this,a)},e.prototype.isPainted=function(){return this._bIsPainted},e.prototype.clear=function(){this._oContext.clearRect(0,0,this._elCanvas.width,this._elCanvas.height),this._bIsPainted=!1},e.prototype.round=function(a){return a?Math.floor(1e3*a)/1e3:a},e}():function(){var a=function(a,b){this._el=a,this._htOption=b};return a.prototype.draw=function(a){for(var b=this._htOption,c=this._el,d=a.getModuleCount(),e=Math.floor(b.width/d),f=Math.floor(b.height/d),g=['<table style="border:0;border-collapse:collapse;">'],h=0;d>h;h++){g.push("<tr>");for(var i=0;d>i;i++)g.push('<td style="border:0;border-collapse:collapse;padding:0;margin:0;width:'+e+"px;height:"+f+"px;background-color:"+(a.isDark(h,i)?b.colorDark:b.colorLight)+';"></td>');g.push("</tr>")}g.push("</table>"),c.innerHTML=g.join("");var j=c.childNodes[0],k=(b.width-j.offsetWidth)/2,l=(b.height-j.offsetWidth)/2;k>0&&l>0&&(j.style.margin=l+"px "+k+"px")},a.prototype.clear=function(){this._el.innerHTML=""},a}();QRCode=function(a,b){if(this._htOption={width:256,height:256,typeNumber:4,colorDark:"#000000",colorLight:"#ffffff",correctLevel:d.H},"string"==typeof b&&(b={text:b}),b)for(var c in b)this._htOption[c]=b[c];"string"==typeof a&&(a=document.getElementById(a)),this._android=n(),this._el=a,this._oQRCode=null,this._oDrawing=new q(this._el,this._htOption),this._htOption.text&&this.makeCode(this._htOption.text)},QRCode.prototype.makeCode=function(a){this._oQRCode=new b(r(a,this._htOption.correctLevel),this._htOption.correctLevel),this._oQRCode.addData(a),this._oQRCode.make(),this._el.title=a,this._oDrawing.draw(this._oQRCode),this.makeImage()},QRCode.prototype.makeImage=function(){"function"==typeof this._oDrawing.makeImage&&(!this._android||this._android>=3)&&this._oDrawing.makeImage()},QRCode.prototype.clear=function(){this._oDrawing.clear()},QRCode.CorrectLevel=d}();
 </script>
-<script>
-/* 兼容性 polyfill（钉钉旧版内置浏览器） */
-(function(){
-  if (typeof Object.assign !== 'function') {
-    Object.assign = function(target) {
-      target = Object(target);
-      for (var i = 1; i < arguments.length; i++) {
-        var src = arguments[i];
-        if (src != null) {
-          for (var key in src) {
-            if (Object.prototype.hasOwnProperty.call(src, key)) { target[key] = src[key]; }
-          }
-        }
-      }
-      return target;
-    };
-  }
-  if (!Element.prototype.closest) {
-    Element.prototype.closest = function(s) {
-      var el = this;
-      while (el) {
-        if (el.matches && el.matches(s)) return el;
-        el = el.parentElement;
-      }
-      return null;
-    };
-  }
-  if (!Element.prototype.matches) {
-    Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector || function(s) {
-      var m = (this.document || this.ownerDocument).querySelectorAll(s), i = m.length;
-      while (--i >= 0 && m.item(i) !== this) {}
-      return i > -1;
-    };
-  }
-  if (!Array.prototype.includes) {
-    Array.prototype.includes = function(val) { return this.indexOf(val) !== -1; };
-  }
-})();
-</script>
-<script src="https://static.cloudbase.net/cloudbase-js-sdk/2.17.3/cloudbase.full.js"></script>
+
 <script src="https://registry.npmmirror.com/xlsx/0.18.5/files/dist/xlsx.full.min.js"></script>
 <script>if (typeof XLSX === 'undefined'){var s2=document.createElement('script');s2.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';document.head.appendChild(s2);}</script>
 
@@ -445,745 +254,550 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 (function () {
 'use strict';
 
-/* ============================================================
- * 培训签到系统（单文件版）
- * 功能：大屏签到二维码 / 按入职日期分批次 / 名单导入 / 架构路由 /
- *       管理员后台 / 实时签到统计（可选云同步）
- * ============================================================ */
-
-/* ---------------- 默认配置 ---------------- */
+/* 默认配置 */
 var DEFAULTS = {
-  title: "培训签到系统",
-  orgName: "",
   adminPassword: "0288",
-  archs: [], /* 全局架构配置，一次填写始终有效 */
-  cloud: {
-    on: 0,
-    envId: "signin-d4gx1kkdf90dedf0e",
-    apiKey: "eyJhbGciOiJSUzI1NiIsImtpZCI6IjlkMWRjMzFlLWI0ZDAtNDQ4Yi1hNzZmLWIwY2M2M2Q4MTQ5OCJ9.eyJpc3MiOiJodHRwczovL3NpZ25pbi1kNGd4MWtrZGY5MGRlZGYwZS5hcC1zaGFuZ2hhaS50Y2ItYXBpLnRlbmNlbnRjbG91ZGFwaS5jb20iLCJzdWIiOiJhbm9uIiwiYXVkIjoic2lnbmluLWQ0Z3gxa2tkZjkwZGVkZjBlIiwiZXhwIjo0MDkyNjk2MzMxLCJpYXQiOjE3ODkwMTMxMzEsIm5vbmNlIjoiMDI0OG9rQTNTRXV2d2E0bDkyMDZDdyIsImF0X2hhc2giOiIwMjQ4b2tBM1NFdXZ3YTRsOTIwNkN3IiwibmFtZSI6IkFub255bW91cyIsInNjb3BlIjoiYW5vbnltb3VzIiwicHJvamVjdF9pZCI6InNpZ25pbi1kNGd4MWtrZGY5MGRlZGYwZSIsIm1ldGEiOnsicGxhdGZvcm0iOiJQdWJsaXNoYWJsZUtleSJ9LCJ1c2VyX3R5cGUiOiIiLCJjbGllbnRfdHlwZSI6ImNsaWVudF91c2VyIiwiaXNfc3lzdGVtX2FkbWluIjpmYWxzZX0.gBZibSn0chhbh2jyR3OolTnMKO4ELCn4BS43KUTym2mXmUxnd3BX9ozZV5b_5_40lDCncoqhxx5O08mBczmxhoDw1rgxr_RsJLHjqQBqvOJ5DYATUCam4YOZcPfyxZk025MHJUb1kTYzzZAvnaqm1Npjz--fFhthLLbpBkJlUmFyppDHpfKXANIGHQusB2CDuJHV3YmhRnXrDUEKb9wejV88_MDllqI6u03v0qdLf-vUJosn9mTtlUdCl0LzASYV9cF92OT3axay_veGNu4gBOrbGrg0yex5Kv4B6ZAxODvWoj_B6anTphuoDhQCrc1D4IxrDz9ko1LyciZV19AOyg",
-    region: "ap-shanghai",
-    className: "SignChecks"
-  }
+  archs: [
+    {name: "探迹", joinUrl: "", formUrl: ""},
+    {name: "探迹智能", joinUrl: "", formUrl: ""},
+    {name: "探域", joinUrl: "", formUrl: ""},
+    {name: "汉数", joinUrl: "", formUrl: ""},
+    {name: "数字贸易岗", joinUrl: "", formUrl: ""},
+    {name: "探呼", joinUrl: "", formUrl: ""},
+    {name: "探讯", joinUrl: "", formUrl: ""}
+  ],
+  students: [],
+  checks: []
 };
 
-var LS_KEYS = {
-  batches: 'sign_batches_v2',
-  current: 'sign_current_v2',
-  settings: 'sign_settings_v2',
-  checks: 'sign_checks_v2'
-};
-var SESSION_ADMIN = 'sign_admin_ok_v2';
+var LS_KEY = 'sign_config_v3';
+var SESSION_ADMIN = 'sign_admin_ok_v3';
 
-/* ---------------- 本地存储 ---------------- */
-function getLS(key, def) {
-  try { var v = JSON.parse(localStorage.getItem(key)); return v == null ? def : v; } catch (e) { return def; }
-}
-function setLS(key, val) {
-  try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
-}
-
-/* ---------------- 状态 ---------------- */
-var settings = Object.assign({}, DEFAULTS, getLS(LS_KEYS.settings, {}));
-settings.adminPassword = DEFAULTS.adminPassword; /* 密码固定，不被旧缓存覆盖 */
-var batches = getLS(LS_KEYS.batches, []); if (!Array.isArray(batches)) { batches = []; }
-var checksLocal = getLS(LS_KEYS.checks, []); if (!Array.isArray(checksLocal)) { checksLocal = []; }
-
-/* ---------------- 云同步（腾讯云开发 CloudBase，通过云函数代理） ---------------- */
-var _tcbApp = null;
-var _tcbFnName = 'http-nodejs-helloworld-q3j3';
-function cloudConf() { var c = settings.cloud; return c && c.on === 1 ? c : null; }
-function tcbInit() {
-  var c = cloudConf();
-  if (!c) { return null; }
-  if (_tcbApp && _tcbApp.config && _tcbApp.config.env === c.envId) { return _tcbApp; }
+/* 本地存储 */
+function getConfig() {
   try {
-    if (typeof cloudbase === 'undefined') { throw new Error('CloudBase SDK 未加载'); }
-    _tcbApp = cloudbase.init({
-      env: c.envId,
-      accessKey: c.apiKey,
-      region: c.region || 'ap-shanghai'
-    });
-    return _tcbApp;
-  } catch (e) {
-    console.error('CloudBase init error:', e);
-    return null;
-  }
-}
-function tcbCall(action, extra) {
-  var app = tcbInit();
-  var c = cloudConf();
-  if (!app || !c) { return Promise.reject(new Error('cloud not configured')); }
-  var data = { action: action, collection: c.className || 'SignChecks' };
-  if (extra) { for (var k in extra) { data[k] = extra[k]; } }
-  return app.callFunction({ name: _tcbFnName, data: data }).then(function (res) {
-    var r = res && res.result ? res.result : res;
-    if (r && r.success === false) { throw new Error(r.error || 'cloud function error'); }
-    return r && r.data !== undefined ? r.data : r;
+    var v = JSON.parse(localStorage.getItem(LS_KEY));
+    if (v && typeof v === 'object') {
+      if (!Array.isArray(v.archs)) v.archs = DEFAULTS.archs.map(function(a){return Object.assign({},a)});
+      if (!Array.isArray(v.students)) v.students = [];
+      if (!Array.isArray(v.checks)) v.checks = [];
+      return v;
+    }
+  } catch (e) {}
+  return Object.assign({}, DEFAULTS, {
+    archs: DEFAULTS.archs.map(function(a){return Object.assign({},a)}),
+    students: [],
+    checks: []
   });
 }
-function tcbFetchChecks() {
-  if (!cloudConf()) { return Promise.resolve([]); }
-  return tcbCall('list', { limit: 1000 }).then(function (list) {
-    return (list || []).map(function (x) {
-      return { batch: x.batch, name: x.name, org: x.org, ts: x.ts };
-    });
-  }).catch(function (e) {
-    console.error('CloudBase fetch error:', e);
-    return [];
-  });
-}
-function tcbFindOne(batch, name) {
-  if (!cloudConf()) { return Promise.resolve(null); }
-  return tcbCall('findOne', { query: { batch: batch, name: name } }).then(function (doc) {
-    return doc || null;
-  }).catch(function () { return null; });
-}
-function tcbCreate(obj) {
-  if (!cloudConf()) { return Promise.resolve(); }
-  return tcbCall('create', { data: obj }).catch(function (e) {
-    console.error('CloudBase create error:', e);
-    throw e;
-  });
+function saveConfig() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(config)); } catch (e) {}
 }
 
-/* ---------------- 配置导出与加载（GitHub Pages 静态方案） ---------------- */
-function exportConfig() {
-  var data = {
-    version: new Date().toISOString(),
-    exportedAt: Date.now(),
-    currentBatch: settings.current || '',
-    archs: settings.archs || [], /* 全局架构 */
-    batches: batches
-  };
-  var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json;charset=utf-8' });
-  var a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'config.json';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(a.href);
-  $('exportMsg').textContent = '配置已导出为 config.json，请上传到 GitHub 仓库根目录并推送。';
-  toast('配置已导出');
-}
+var config = getConfig();
+config.adminPassword = DEFAULTS.adminPassword; /* 密码固定 */
 
-var _remoteConfigLoaded = false;
-function loadRemoteConfig() {
-  if (_remoteConfigLoaded) { return Promise.resolve(false); }
-  /* 只在手机端（窄屏）加载远程配置，管理端用本地配置 */
-  if (window.innerWidth >= 768) { return Promise.resolve(false); }
-  return fetch('config.json?v=' + Date.now(), { cache: 'no-store' })
-    .then(function (r) {
-      if (!r.ok) { throw new Error('HTTP ' + r.status); }
-      return r.json();
-    })
-    .then(function (cfg) {
-      if (cfg && Array.isArray(cfg.batches)) {
-        batches = cfg.batches;
-        saveBatches();
-        if (Array.isArray(cfg.archs)) { settings.archs = cfg.archs; } /* 加载全局架构 */
-        if (cfg.currentBatch) { settings.current = cfg.currentBatch; }
-        setLS(LS_KEYS.settings, settings);
-        _remoteConfigLoaded = true;
-        console.log('Remote config loaded, batches:', batches.length, 'archs:', (settings.archs || []).length);
-        return true;
-      }
-      return false;
-    })
-    .catch(function (e) {
-      console.warn('Remote config load failed:', e.message);
-      return false;
-    });
-}
+var archDraft = [], stuDraft = [];
 
-/* 合并本地 + 云端签到记录（按 批次+姓名 去重，保留最早时间） */
-function mergedChecks() {
-  var map = {};
-  function put(rec) {
-    if (!rec || !rec.batch || !rec.name) { return; }
-    var k = rec.batch + '|' + rec.name;
-    if (!(k in map) || rec.ts < map[k].ts) { map[k] = { batch: rec.batch, name: rec.name, org: rec.org || '', ts: rec.ts }; }
-  }
-  checksLocal.forEach(put);
-  if (cloudConf()) {
-    return tcbFetchChecks().then(function (list) { list.forEach(put); return Object.keys(map).map(function (k) { return map[k]; }); });
-  }
-  return Promise.resolve(Object.keys(map).map(function (k) { return map[k]; }));
-}
-function saveChecksLocal() { setLS(LS_KEYS.checks, checksLocal); }
-
-/* 签到：本地记录 + 云查重写入 */
-function recordCheck(student, batchDate) {
-  var rec = { batch: batchDate, name: student.name, org: student.org || '', ts: Date.now() };
-  var existed = checksLocal.some(function (c) { return c.batch === rec.batch && c.name === rec.name; });
-  if (!existed) {
-    checksLocal.push(rec);
-    saveChecksLocal();
-  }
-  var c = cloudConf();
-  if (c) {
-    return tcbFindOne(rec.batch, rec.name).then(function (old) {
-      if (old) { return; }
-      return tcbCreate({ batch: rec.batch, name: rec.name, org: rec.org, ts: rec.ts });
-    }).catch(function () { /* 云失败不影响本地 */ });
-  }
-  return Promise.resolve();
-}
-
-/* ---------------- 批次 ---------------- */
-function saveBatches() { setLS(LS_KEYS.batches, batches); }
-function getBatch(date) {
-  for (var i = 0; i < batches.length; i++) { if (batches[i].date === date) { return batches[i]; } }
-  return null;
-}
-function currentBatch() {
-  var b = getBatch(settings.current);
-  if (b) { return b; }
-  return batches.length ? batches[0] : null;
-}
-function setCurrent(date) {
-  settings.current = date;
-  setLS(LS_KEYS.settings, settings);
-}
-function todayStr() {
-  var d = new Date();
-  var m = ('0' + (d.getMonth() + 1)).slice(-2);
-  var day = ('0' + d.getDate()).slice(-2);
-  return d.getFullYear() + '-' + m + '-' + day;
-}
-function fmtTime(ts) {
-  var d = new Date(ts);
-  var h = ('0' + d.getHours()).slice(-2);
-  var m = ('0' + d.getMinutes()).slice(-2);
-  var s = ('0' + d.getSeconds()).slice(-2);
-  return h + ':' + m + ':' + s;
-}
-
-/* ---------------- 工具 ---------------- */
-function esc(s) {
-  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/"/g, '&quot;')
-    .replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
+/* 工具 */
 function $(id) { return document.getElementById(id); }
-var toastTimer = null;
+function esc(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function toast(msg) {
   var t = $('toast');
   t.textContent = msg;
   t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(function () { t.classList.remove('show'); }, 2200);
+  setTimeout(function(){ t.classList.remove('show'); }, 2000);
 }
+function fmtTime(ts) {
+  var d = new Date(ts);
+  var p = function(n){return ('0'+n).slice(-2)};
+  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());
+}
+
+/* 模糊匹配架构 */
+function matchArch(org) {
+  if (!org) return null;
+  var orgStr = String(org).trim();
+  if (!orgStr) return null;
+  var archs = config.archs || [];
+  /* 1. 精确匹配 */
+  for (var i = 0; i < archs.length; i++) {
+    if (archs[i].name === orgStr) return archs[i];
+  }
+  /* 2. 包含匹配（优先匹配更长的架构名，更精确） */
+  var candidates = [];
+  for (var i = 0; i < archs.length; i++) {
+    var name = archs[i].name;
+    if (name && (orgStr.indexOf(name) !== -1 || name.indexOf(orgStr) !== -1)) {
+      candidates.push({arch: archs[i], len: name.length});
+    }
+  }
+  if (candidates.length) {
+    candidates.sort(function(a,b){return b.len - a.len});
+    return candidates[0].arch;
+  }
+  return null;
+}
+
+/* 渲染二维码 */
 function renderQR(el, text, size) {
   el.innerHTML = '';
-  if (!text) { el.innerHTML = '<div class="qr-empty" style="width:' + size + 'px;height:' + size + 'px;">该链接尚未配置<br>请联系管理员</div>'; return; }
-  if (typeof QRCode === 'undefined') { el.innerHTML = '<div class="qr-empty" style="width:' + size + 'px;height:' + size + 'px;">二维码组件加载失败<br>请点上方按钮打开</div>'; return; }
-  try {
-    new QRCode(el, { text: text, width: size, height: size, colorDark: '#1A1B1C', colorLight: '#FFFFFF', correctLevel: QRCode.CorrectLevel.M });
-  } catch (e) {
-    el.innerHTML = '<div class="qr-empty" style="width:' + size + 'px;height:' + size + 'px;">二维码生成失败</div>';
-  }
+  if (!text) { el.innerHTML = '<div style="color:#9ca3af;font-size:12px;padding:20px;text-align:center">未配置链接</div>'; return; }
+  new QRCode(el, { text: text, width: size || 200, height: size || 200, correctLevel: QRCode.CorrectLevel.M });
 }
 
-/* ---------------- 名单解析 ---------------- */
-function cellStr(v) { return v == null ? '' : String(v).trim(); }
-function parseTable(rows) {
-  if (!rows || !rows.length) { return { ok: false, msg: '文件为空' }; }
-  var head = rows[0].map(cellStr);
-  var iName = -1, iOrg = -1;
-  head.forEach(function (h, i) {
-    if (/姓名|名字/.test(h) && iName < 0) { iName = i; }
-    if (/所属钉钉|所属架构|所属组织|架构|组织/.test(h) && iOrg < 0) { iOrg = i; }
-  });
-  if (iName < 0) { return { ok: false, msg: '未找到「姓名」列（当前表头：' + head.join(' / ') + '）' }; }
-  if (iOrg < 0) { return { ok: false, msg: '未找到「所属钉钉」列（当前表头：' + head.join(' / ') + '）' }; }
-  var list = [];
-  for (var i = 1; i < rows.length; i++) {
-    var r = rows[i];
-    var name = cellStr(r[iName]);
-    var org = cellStr(r[iOrg]);
-    if (!name) { continue; }
-    list.push({ name: name, org: org });
-  }
-  return { ok: true, list: list, added: list.length, nameCol: head[iName], orgCol: head[iOrg] };
+/* ================= 路由 ================= */
+function show(v) {
+  $('home').classList.add('hide');
+  $('login').classList.add('hide');
+  $('admin').classList.add('hide');
+  v.classList.remove('hide');
 }
-function parseCSVText(text) {
-  var lines = text.replace(/\r\n?/g, '\n').split('\n');
-  var rows = [];
-  lines.forEach(function (line) {
-    if (!line.trim()) { return; }
-    var parts = line.split(/\t|,(?=(?:[^"]*"[^"]*")*[^"]*$)/);
-    rows.push(parts.map(function (p) { return p.replace(/^"|"$/g, ''); }));
-  });
-  return rows;
-}
-function handleFile(file) {
-  var name = (file.name || '').toLowerCase();
-  if (/\.xlsx?$/.test(name)) {
-    var reader = new FileReader();
-    reader.onload = function (e) {
-      try {
-        if (typeof XLSX === 'undefined') { toast('Excel 解析组件加载失败，请改用 CSV'); return; }
-        var wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
-        var ws = wb.Sheets[wb.SheetNames[0]];
-        var rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
-        applyParsed(parseTable(rows));
-      } catch (err) { toast('文件解析失败：' + err.message); }
-    };
-    reader.readAsArrayBuffer(file);
-  } else {
-    var r2 = new FileReader();
-    r2.onload = function (e) { applyParsed(parseTable(parseCSVText(String(e.target.result)))); };
-    r2.readAsText(file);
-  }
-}
-function applyParsed(res) {
-  if (!res.ok) { toast(res.msg); return; }
-  stuDraft = res.list;
-  renderStuRows();
-  toast('导入成功：' + res.added + ' 人（识别列：' + res.nameCol + ' / ' + res.orgCol + '），记得点「保存名单」');
-}
-
-/* ---------------- 视图与路由 ---------------- */
-var V = {
-  home: $('view-home'), login: $('view-login'), admin: $('view-admin'),
-  entry: $('adminEntry')
-};
-function show(v) { V.home.classList.add('hide'); V.login.classList.add('hide'); V.admin.classList.add('hide'); v.classList.remove('hide'); }
 function isLogged() { return sessionStorage.getItem(SESSION_ADMIN) === '1'; }
 function route() {
   var h = location.hash || '#/';
   if (h.indexOf('#/admin') === 0) {
-    if (isLogged()) { showAdmin(); } else { show(V.login); $('adminPwd').focus(); }
+    if (isLogged()) { showAdmin(); } else { show($('login')); $('adminPwd').focus(); }
   } else { showHome(); }
 }
 window.addEventListener('hashchange', route);
 
 /* ================= 学员端 ================= */
 function showHome() {
-  show(V.home);
-  renderBigQr();
-  renderHomeTip();
-  $('kw').value = '';
-  hideCards();
-}
-function hideCards() {
-  $('notfoundCard').classList.add('hide');
-  $('ambiguousCard').classList.add('hide');
-  $('okCard').classList.add('hide');
-}
-function renderBigQr() {
+  show($('home'));
   var url = location.href.split('#')[0];
-  renderQR($('bigQr'), url, 260);
-  var b = currentBatch();
-  $('curBatchTag').textContent = b ? ('当前批次：' + b.date) : '管理员尚未配置批次';
+  renderQR($('bigQr'), url, 220);
+  $('kw').value = '';
+  $('resultArea').innerHTML = '';
+  renderHomeTip();
 }
 function renderHomeTip() {
-  var b = currentBatch();
   var tip = $('homeTip');
-  if (!b) {
-    tip.style.display = ''; tip.textContent = '管理员尚未配置批次，请联系管理员。';
-  } else if (!b.students.length) {
-    tip.style.display = ''; tip.textContent = '本批次（' + b.date + '）名单未配置，请联系管理员。';
+  if (!config.students.length) {
+    tip.style.display = '';
+    tip.textContent = '管理员尚未配置名单，请联系管理员。';
   } else {
     tip.style.display = 'none';
   }
 }
-
-function findStudent(name, batch) {
+function findStudent(name) {
   var k = String(name).trim();
-  if (!k) { return { type: 'empty' }; }
+  if (!k) return {type: 'empty'};
   var hit = [];
-  (batch.students || []).forEach(function (s) { if (s.name === k) { hit.push(s); } });
-  if (hit.length === 1) { return { type: 'ok', student: hit[0] }; }
-  if (hit.length > 1) { return { type: 'ambiguous', list: hit }; }
-  return { type: 'notfound' };
+  (config.students || []).forEach(function(s) { if (s.name === k) hit.push(s); });
+  if (hit.length === 1) return {type: 'ok', student: hit[0]};
+  if (hit.length > 1) return {type: 'ambiguous', list: hit};
+  return {type: 'notfound'};
 }
-function matchArch(org) {
-  var list = settings.archs || []; /* 全局架构 */
-  for (var i = 0; i < list.length; i++) {
-    if (list[i].name === org || list[i].id === org) { return list[i]; }
-  }
-  return null;
-}
-function renderOk(student, batch) {
-  var arch = matchArch(student.org); /* 从全局架构匹配 */
-  var archName = arch ? arch.name : (student.org || '未配置');
+function renderOk(student) {
+  var arch = matchArch(student.org);
+  var archName = arch ? arch.name : (student.org || '未匹配');
   var now = new Date();
-  var timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
-  $('stAvatar').textContent = (student.name || '?').charAt(0);
-  $('stName').textContent = student.name;
-  $('stMeta').textContent = '入职批次：' + batch.date + ' | 签到时间：' + timeStr;
-  $('stArchTag').textContent = archName;
+  var timeStr = fmtTime(now.getTime());
 
-  var joinUrl = arch ? (arch.joinUrl || '') : '';
-  var formUrl = arch ? (arch.formUrl || '') : '';
-  $('joinBtn').href = joinUrl; $('joinBtn').style.display = joinUrl ? '' : 'none';
-  $('formBtn').href = formUrl; $('formBtn').style.display = formUrl ? '' : 'none';
-  renderQR($('qr1'), joinUrl, 144);
-  renderQR($('qr2'), formUrl, 144);
+  var html = '<div class="result-card">' +
+    '<div class="student-info">' +
+      '<div class="avatar">' + esc((student.name || '?').charAt(0)) + '</div>' +
+      '<div>' +
+        '<div class="student-name">' + esc(student.name) + '</div>' +
+        '<div class="student-meta">签到时间：' + timeStr + '</div>' +
+      '</div>' +
+      '<div style="margin-left:auto"><span class="arch-tag">' + esc(archName) + '</span></div>' +
+    '</div>';
 
-  $('notfoundCard').classList.add('hide');
-  $('ambiguousCard').classList.add('hide');
-  $('okCard').classList.remove('hide');
-  $('okCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (arch) {
+    var joinUrl = arch.joinUrl || '';
+    var formUrl = arch.formUrl || '';
+    html += '<div class="step-card">' +
+      '<div class="step-title"><div class="step-num">1</div><div class="step-name">加入你的架构</div></div>' +
+      '<div class="step-desc">用钉钉打开并确认加入，等待管理员通过。</div>' +
+      '<div class="step-btns">';
+    if (joinUrl) html += '<a class="step-btn" href="' + esc(joinUrl) + '" target="_blank">在钉钉中打开</a>';
+    html += '</div>';
+    if (joinUrl) html += '<div class="qr-box"><div id="qr1"></div><div class="qr-label">或用钉钉扫码加入</div></div>';
+    html += '</div>';
 
-  recordCheck(student, batch.date); /* 签到 */
+    html += '<div class="step-card">' +
+      '<div class="step-title"><div class="step-num">2</div><div class="step-name">填写入职登记</div></div>' +
+      '<div class="step-desc">加入架构后，填写该架构的入职登记表。</div>' +
+      '<div class="step-btns">';
+    if (formUrl) html += '<a class="step-btn" href="' + esc(formUrl) + '" target="_blank">在钉钉中打开</a>';
+    html += '</div>';
+    if (formUrl) html += '<div class="qr-box"><div id="qr2"></div><div class="qr-label">或用钉钉扫码填写</div></div>';
+    html += '</div>';
+  } else {
+    html += '<div style="padding:12px;background:#fef3c7;color:#92400e;border-radius:8px;font-size:13px;margin-bottom:16px">所属钉钉「' + esc(student.org || '') + '」未匹配到架构，请联系管理员。</div>';
+  }
+
+  html += '<div class="success-tip">签到成功。请按顺序完成以上两步，均在钉钉内进行。</div></div>';
+
+  $('resultArea').innerHTML = html;
+  if (arch) {
+    if (arch.joinUrl) renderQR($('qr1'), arch.joinUrl, 140);
+    if (arch.formUrl) renderQR($('qr2'), arch.formUrl, 140);
+  }
+
+  /* 记录签到 */
+  var exists = config.checks.some(function(c){return c.name === student.name});
+  if (!exists) {
+    config.checks.push({name: student.name, org: student.org || '', ts: now.getTime()});
+    saveConfig();
+  }
+}
+function renderNotFound(kw) {
+  var html = '<div class="notfound-card">' +
+    '<div class="icon">🔍</div>' +
+    '<h3>未找到该学员</h3>' +
+    '<p>姓名「' + esc(kw) + '」不在名单中，请检查姓名是否正确，或联系管理员。</p>' +
+    '</div>';
+  $('resultArea').innerHTML = html;
 }
 function doSearch() {
-  var b = currentBatch();
-  if (!b || !b.students.length) { toast('当前批次尚未配置名单，请联系管理员'); return; }
+  if (!config.students.length) { toast('尚未配置名单，请联系管理员'); return; }
   var kw = $('kw').value;
-  var res = findStudent(kw, b);
+  var res = findStudent(kw);
   if (res.type === 'empty') { $('kw').focus(); return; }
-  if (res.type === 'ok') { renderOk(res.student, b); return; }
-  if (res.type === 'notfound') {
-    $('nfKeyword').textContent = kw;
-    $('okCard').classList.add('hide'); $('ambiguousCard').classList.add('hide');
-    $('notfoundCard').classList.remove('hide');
-    $('notfoundCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    return;
-  }
+  if (res.type === 'ok') { renderOk(res.student); return; }
+  if (res.type === 'notfound') { renderNotFound(kw); return; }
   /* ambiguous */
-  var box = $('ambList');
-  box.innerHTML = '';
-  res.list.forEach(function (s) {
-    var arch = matchArch(s.org); /* 从全局架构匹配 */
-    var btn = document.createElement('button');
-    btn.className = 'btn btn-ghost btn-sm';
-    btn.style.margin = '0 8px 8px 0';
-    btn.textContent = s.name + '（' + (arch ? arch.name : s.org) + '）';
-    btn.addEventListener('click', function () { renderOk(s, b); });
-    box.appendChild(btn);
+  var html = '<div class="result-card"><div style="margin-bottom:12px;font-size:14px">找到多个同名学员，请选择：</div>';
+  res.list.forEach(function(s) {
+    var arch = matchArch(s.org);
+    html += '<button class="btn btn-ghost btn-sm" style="margin:0 8px 8px 0" onclick="window._selectStudent(' + JSON.stringify(s.name) + ')">' + esc(s.name) + '（' + esc(arch ? arch.name : s.org) + '）</button>';
   });
-  $('okCard').classList.add('hide'); $('notfoundCard').classList.add('hide');
-  $('ambiguousCard').classList.remove('hide');
-  $('ambiguousCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  html += '</div>';
+  $('resultArea').innerHTML = html;
 }
+window._selectStudent = function(name) {
+  var s = config.students.find(function(x){return x.name === name});
+  if (s) renderOk(s);
+};
+$('searchBtn').addEventListener('click', doSearch);
+$('kw').addEventListener('keydown', function(e) { if (e.key === 'Enter') doSearch(); });
 
-/* ================= 管理员登录 ================= */
-$('loginBtn').addEventListener('click', function () {
+/* ================= 登录 ================= */
+$('loginBtn').addEventListener('click', function() {
   var pwd = $('adminPwd').value;
-  if (pwd === settings.adminPassword) {
+  if (pwd === config.adminPassword) {
     sessionStorage.setItem(SESSION_ADMIN, '1');
     location.hash = '#/admin';
   } else {
     toast('密码错误');
   }
 });
-$('adminPwd').addEventListener('keydown', function (e) { if (e.key === 'Enter') { $('loginBtn').click(); } });
+$('adminPwd').addEventListener('keydown', function(e) { if (e.key === 'Enter') $('loginBtn').click(); });
 
 /* ================= 管理后台 ================= */
-var archDraft = [], stuDraft = [], dirty = false;
-function markDirty() { dirty = true; }
-
 function showAdmin() {
-  show(V.admin);
+  show($('admin'));
   reloadAll();
 }
 function reloadAll() {
-  var b = currentBatch();
-  fillBatchSelect();
-  renderBatchTable();
-  archDraft = (settings.archs || []).map(function (a) { return Object.assign({}, a); }); /* 全局架构，不随批次变化 */
-  stuDraft = b ? (b.students || []).map(function (s) { return Object.assign({}, s); }) : [];
-  dirty = false;
+  archDraft = config.archs.map(function(a){return Object.assign({}, a)});
+  stuDraft = config.students.map(function(s){return Object.assign({}, s)});
   renderArchRows();
   renderStuRows();
-  $('archBatchTag').textContent = '全局配置（所有批次共用）';
-  $('stuBatchTag').textContent = b ? b.date : '（无）';
-  $('checkBatchTag').textContent = b ? b.date : '（无）';
-  refreshChecks();
-  loadSettingPanel();
+  renderStuStats();
+  renderCheckRows();
+  renderCheckStats();
 }
-function fillBatchSelect() {
-  var sel = $('batchSelect');
-  sel.innerHTML = '';
-  batches.forEach(function (b) {
-    var op = document.createElement('option');
-    op.value = b.date;
-    op.textContent = b.date + (b.date === settings.current ? '（当前）' : '');
-    if (b.date === settings.current) { op.selected = true; }
-    sel.appendChild(op);
-  });
-}
-$('batchSelect').addEventListener('change', function () {
-  var b = currentBatch();
-  if (dirty && b && !confirm('当前批次有未保存的修改，切换将丢弃，确定继续？')) {
-    this.value = b.date; return;
-  }
-  setCurrent(this.value);
-  reloadAll();
-});
 
-/* ---- 批次面板 ---- */
-function renderBatchTable() {
-  var tb = $('batchTable');
-  tb.innerHTML = '';
-  if (!batches.length) {
-    tb.innerHTML = '<tr><td colspan="5" class="empty-tip">还没有批次，先在上方创建一个</td></tr>';
-    return;
-  }
-  mergedChecks().then(function (checks) {
-    var doneMap = {};
-    checks.forEach(function (c) { doneMap[c.batch + '|' + c.name] = 1; });
-    batches.forEach(function (b) {
-      var tr = document.createElement('tr');
-      var done = (b.students || []).filter(function (s) { return doneMap[b.date + '|' + s.name]; }).length;
-      var isCur = b.date === settings.current;
-      tr.innerHTML =
-        '<td><b>' + esc(b.date) + '</b>' + (isCur ? ' <span class="arch-tag" style="margin-left:6px;padding:2px 8px;">当前</span>' : '') + '</td>' +
-        '<td>-</td>' +
-        '<td>' + (b.students || []).length + '</td>' +
-        '<td>' + done + '</td>' +
-        '<td><button class="btn btn-ghost btn-sm" data-act="cur" data-date="' + esc(b.date) + '">设为当前</button> ' +
-        '<button class="btn btn-danger btn-sm" data-act="del" data-date="' + esc(b.date) + '">删除</button></td>';
-      tb.appendChild(tr);
-    });
-    tb.querySelectorAll('[data-act]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var date = btn.getAttribute('data-date');
-        if (btn.getAttribute('data-act') === 'cur') { setCurrent(date); reloadAll(); }
-        else if (confirm('确定删除批次 ' + date + '？其名单将一并删除。')) {
-          batches = batches.filter(function (x) { return x.date !== date; });
-          if (settings.current === date) { settings.current = batches.length ? batches[0].date : ''; }
-          setLS(LS_KEYS.settings, settings);
-          saveBatches();
-          reloadAll();
-        }
-      });
-    });
-  }).catch(function(e){ console.error('renderBatchTable error:', e); });
-}
-$('addBatchBtn').addEventListener('click', function () {
-  var date = $('newBatchDate').value || todayStr();
-  if (getBatch(date)) { toast('该日期批次已存在'); return; }
-  batches.push({ date: date, students: [] });
-  saveBatches();
-  setCurrent(date);
-  $('newBatchDate').value = '';
-  toast('已创建批次 ' + date);
-  reloadAll();
-});
-
-/* ---- 架构面板 ---- */
+/* ---- 架构配置 ---- */
 function renderArchRows() {
   var box = $('archList');
   box.innerHTML = '';
   if (!archDraft.length) {
     box.innerHTML = '<div class="empty-tip">暂无架构，点击下方「添加架构」</div>';
+    return;
   }
-  archDraft.forEach(function (a, idx) {
+  archDraft.forEach(function(a, idx) {
     var row = document.createElement('div');
     row.className = 'arch-row';
     row.innerHTML =
-      '<div><label>代号</label><input type="text" data-a="id" value="' + esc(a.id) + '" placeholder="A"></div>' +
-      '<div><label>名称</label><input type="text" data-a="name" value="' + esc(a.name) + '" placeholder="A架构"></div>' +
-      '<div style="flex:2 1 260px;"><label>第 1 个码 · 加入邀请链接</label><input type="text" data-a="joinUrl" value="' + esc(a.joinUrl) + '" placeholder="https://h5.dingtalk.com/invite-page/..."></div>' +
-      '<div style="flex:2 1 260px;"><label>第 2 个码 · 入职登记链接</label><input type="text" data-a="formUrl" value="' + esc(a.formUrl) + '" placeholder="https://..."></div>' +
-      '<div class="del-box"><button class="btn btn-danger btn-sm" data-del="' + idx + '" type="button">删除</button></div>';
+      '<div><label>架构名称</label><input type="text" data-a="name" value="' + esc(a.name) + '" placeholder="如：探迹"></div>' +
+      '<div><label>加入邀请链接</label><input type="text" data-a="joinUrl" value="' + esc(a.joinUrl) + '" placeholder="https://h5.dingtalk.com/invite-page/..."></div>' +
+      '<div><label>入职登记链接</label><input type="text" data-a="formUrl" value="' + esc(a.formUrl) + '" placeholder="https://dturl.co/..."></div>' +
+      '<div><button class="btn btn-danger btn-sm" data-del="' + idx + '" type="button">删除</button></div>';
     box.appendChild(row);
   });
-  box.querySelectorAll('input[data-a]').forEach(function (inp) {
-    inp.addEventListener('input', function () {
+  box.querySelectorAll('input[data-a]').forEach(function(inp) {
+    inp.addEventListener('input', function() {
       var row = inp.closest('.arch-row');
       var idx = Array.prototype.indexOf.call(row.parentNode.children, row);
       archDraft[idx][inp.getAttribute('data-a')] = inp.value;
-      markDirty();
     });
   });
-  box.querySelectorAll('[data-del]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
+  box.querySelectorAll('[data-del]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
       archDraft.splice(Number(btn.getAttribute('data-del')), 1);
       renderArchRows();
-      markDirty();
     });
   });
 }
-$('addArchBtn').addEventListener('click', function () {
-  archDraft.push({ id: '', name: '', joinUrl: '', formUrl: '' });
+$('addArchBtn').addEventListener('click', function() {
+  archDraft.push({name: '', joinUrl: '', formUrl: ''});
   renderArchRows();
-  markDirty();
 });
-$('saveArchBtn').addEventListener('click', function () {
-  settings.archs = archDraft.filter(function (a) { return (a.id && a.id.trim()) || (a.name && a.name.trim()); });
-  setLS(LS_KEYS.settings, settings);
-  dirty = false;
-  toast('架构配置已保存（全局生效，所有批次共用）');
+$('clearArchBtn').addEventListener('click', function() {
+  if (confirm('确定清空所有架构？')) {
+    archDraft = [];
+    renderArchRows();
+  }
+});
+$('saveArchBtn').addEventListener('click', function() {
+  config.archs = archDraft.filter(function(a){return a.name && a.name.trim()});
+  saveConfig();
+  toast('架构配置已保存');
   reloadAll();
 });
 
-/* ---- 名单面板 ---- */
+/* ---- 名单管理 ---- */
 function renderStuRows() {
   var tb = $('stuTable');
   tb.innerHTML = '';
   if (!stuDraft.length) {
-    tb.innerHTML = '<tr><td colspan="3" class="empty-tip">暂无名单，拖入文件或点击「添加一行」</td></tr>';
+    tb.innerHTML = '<tr><td colspan="5" class="empty-tip">暂无名单，点击上方导入或添加</td></tr>';
+    return;
   }
-  stuDraft.forEach(function (s, idx) {
+  stuDraft.forEach(function(s, idx) {
+    var arch = matchArch(s.org);
     var tr = document.createElement('tr');
     tr.innerHTML =
-      '<td><input type="text" data-s="name" value="' + esc(s.name) + '" placeholder="姓名"></td>' +
-      '<td><input type="text" data-s="org" value="' + esc(s.org) + '" placeholder="如：A架构"></td>' +
+      '<td>' + (idx+1) + '</td>' +
+      '<td><input type="text" data-s="name" value="' + esc(s.name) + '" placeholder="姓名" style="width:100%;padding:6px 8px;border:1px solid #e4e3dd;border-radius:4px;font-size:13px"></td>' +
+      '<td><input type="text" data-s="org" value="' + esc(s.org) + '" placeholder="所属钉钉" style="width:100%;padding:6px 8px;border:1px solid #e4e3dd;border-radius:4px;font-size:13px"></td>' +
+      '<td>' + (arch ? '<span class="match-tag ok">' + esc(arch.name) + '</span>' : '<span class="match-tag fail">未匹配</span>') + '</td>' +
       '<td><button class="btn btn-danger btn-sm" data-del="' + idx + '" type="button">删除</button></td>';
     tb.appendChild(tr);
   });
-  tb.querySelectorAll('input[data-s]').forEach(function (inp) {
-    inp.addEventListener('input', function () {
+  tb.querySelectorAll('input[data-s]').forEach(function(inp) {
+    inp.addEventListener('input', function() {
       var tr = inp.closest('tr');
       var idx = Array.prototype.indexOf.call(tr.parentNode.children, tr);
       stuDraft[idx][inp.getAttribute('data-s')] = inp.value;
-      markDirty();
     });
   });
-  tb.querySelectorAll('[data-del]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
+  tb.querySelectorAll('[data-del]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
       stuDraft.splice(Number(btn.getAttribute('data-del')), 1);
       renderStuRows();
-      markDirty();
+      renderStuStats();
     });
   });
 }
-$('addStuBtn').addEventListener('click', function () { stuDraft.push({ name: '', org: '' }); renderStuRows(); markDirty(); });
-$('clearStuBtn').addEventListener('click', function () {
-  if (stuDraft.length && !confirm('确定清空本批次名单？')) { return; }
-  stuDraft = []; renderStuRows(); markDirty();
+function renderStuStats() {
+  var total = stuDraft.length;
+  var matched = 0, unmatched = 0;
+  stuDraft.forEach(function(s) {
+    if (matchArch(s.org)) matched++; else unmatched++;
+  });
+  $('stuStats').innerHTML =
+    '<div class="stat-item"><div class="num">' + total + '</div><div class="label">总人数</div></div>' +
+    '<div class="stat-item"><div class="num" style="color:#16a34a">' + matched + '</div><div class="label">已匹配架构</div></div>' +
+    '<div class="stat-item"><div class="num" style="color:#dc2626">' + unmatched + '</div><div class="label">未匹配（异常）</div></div>';
+}
+$('addStuBtn').addEventListener('click', function() {
+  stuDraft.push({name: '', org: ''});
+  renderStuRows();
+  renderStuStats();
 });
-$('saveStuBtn').addEventListener('click', function () {
-  var b = currentBatch();
-  if (!b) { toast('请先创建批次'); return; }
-  b.students = stuDraft.filter(function (s) { return (s.name && s.name.trim()); });
-  saveBatches();
-  dirty = false;
-  toast('名单已保存：' + b.students.length + ' 人');
-  reloadAll();
+$('clearStuBtn').addEventListener('click', function() {
+  if (confirm('确定清空所有名单？')) {
+    stuDraft = [];
+    config.students = [];
+    saveConfig();
+    renderStuRows();
+    renderStuStats();
+  }
+});
+$('rematchBtn').addEventListener('click', function() {
+  renderStuRows();
+  renderStuStats();
+  toast('已重新匹配架构');
+});
+$('exportStuBtn').addEventListener('click', function() {
+  var lines = ['姓名,所属钉钉,匹配架构'];
+  stuDraft.forEach(function(s) {
+    var arch = matchArch(s.org);
+    lines.push([s.name, s.org, arch ? arch.name : '未匹配'].map(function(v){return '"'+String(v).replace(/"/g,'""')+'"'}).join(','));
+  });
+  var blob = new Blob(['\ufeff' + lines.join('\n')], {type: 'text/csv;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '名单导出.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
 });
 
-/* 拖拽 / 文件导入 */
-var dz = $('dropzone'), fi = $('fileInput');
-dz.addEventListener('click', function () { fi.click(); });
-dz.addEventListener('dragover', function (e) { e.preventDefault(); dz.classList.add('drag'); });
-dz.addEventListener('dragleave', function () { dz.classList.remove('drag'); });
-dz.addEventListener('drop', function (e) {
-  e.preventDefault(); dz.classList.remove('drag');
-  if (e.dataTransfer.files && e.dataTransfer.files.length) { handleFile(e.dataTransfer.files[0]); }
+/* 文件导入 */
+var dropZone = $('dropZone');
+var fileInput = $('fileInput');
+dropZone.addEventListener('click', function() { fileInput.click(); });
+dropZone.addEventListener('dragover', function(e) { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', function() { dropZone.classList.remove('dragover'); });
+dropZone.addEventListener('drop', function(e) {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
 });
-fi.addEventListener('change', function () { if (fi.files.length) { handleFile(fi.files[0]); } fi.value = ''; });
+fileInput.addEventListener('change', function(e) {
+  if (e.target.files.length) handleFile(e.target.files[0]);
+  e.target.value = '';
+});
+function handleFile(file) {
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = new Uint8Array(e.target.result);
+      var wb = XLSX.read(data, {type: 'array'});
+      var ws = wb.Sheets[wb.SheetNames[0]];
+      var rows = XLSX.utils.sheet_to_json(ws, {header: 1});
+      if (!rows.length) { toast('文件为空'); return; }
+      /* 找姓名和所属钉钉列 */
+      var headers = rows[0].map(function(h){return String(h || '').trim()});
+      var nameCol = headers.indexOf('姓名');
+      var orgCol = headers.indexOf('所属钉钉');
+      if (nameCol === -1 || orgCol === -1) {
+        toast('未找到「姓名」或「所属钉钉」列，请检查文件格式');
+        return;
+      }
+      var imported = [];
+      for (var i = 1; i < rows.length; i++) {
+        var name = String(rows[i][nameCol] || '').trim();
+        var org = String(rows[i][orgCol] || '').trim();
+        if (name) imported.push({name: name, org: org});
+      }
+      if (!imported.length) { toast('未导入有效数据'); return; }
+      /* 去重 */
+      var exists = {};
+      stuDraft.forEach(function(s){exists[s.name] = true});
+      var added = 0;
+      imported.forEach(function(s) {
+        if (!exists[s.name]) {
+          stuDraft.push(s);
+          exists[s.name] = true;
+          added++;
+        }
+      });
+      config.students = stuDraft.slice();
+      saveConfig();
+      renderStuRows();
+      renderStuStats();
+      toast('成功导入 ' + added + ' 人（跳过重复 ' + (imported.length - added) + ' 人）');
+    } catch (err) {
+      toast('文件解析失败：' + err.message);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
 
-/* ---- 签到情况面板 ---- */
-function refreshChecks() {
-  var b = currentBatch();
-  if (!b) {
-    $('stTotal').textContent = '0'; $('stDone').textContent = '0'; $('stMiss').textContent = '0';
-    $('missList').innerHTML = '<div class="empty-tip">暂无批次</div>';
-    $('doneList').innerHTML = '';
+/* ---- 签到情况 ---- */
+function renderCheckRows() {
+  var tb = $('checkTable');
+  tb.innerHTML = '';
+  if (!config.students.length) {
+    tb.innerHTML = '<tr><td colspan="6" class="empty-tip">暂无名单</td></tr>';
     return;
   }
-  $('syncNote').textContent = cloudConf() ? '云同步已开启（腾讯云开发）：统计为全设备实时数据。' : '云同步未开启：仅本机浏览器的签到记录。开启后可在任意设备实时查看（设置页配置）。';
-  mergedChecks().then(function (checks) {
-    var doneMap = {};
-    checks.forEach(function (c) { doneMap[c.batch + '|' + c.name] = c; });
-    var students = b.students || [];
-    var done = [], miss = [];
-    students.forEach(function (s) {
-      var c = doneMap[b.date + '|' + s.name];
-      if (c) { done.push({ name: s.name, org: s.org, ts: c.ts }); } else { miss.push({ name: s.name, org: s.org }); }
-    });
-    $('stTotal').textContent = students.length;
-    $('stDone').textContent = done.length;
-    $('stMiss').textContent = miss.length;
-    $('missList').innerHTML = miss.length ? '' : '<div class="empty-tip">全部签到完成</div>';
-    miss.forEach(function (s) {
-      var d = document.createElement('div');
-      d.className = 'chk-item';
-      d.innerHTML = '<span class="dot dot-no"></span>' + esc(s.name) + '<span class="muted" style="font-size:12px;">' + esc(s.org) + '</span>';
-      $('missList').appendChild(d);
-    });
-    $('doneList').innerHTML = done.length ? '' : '<div class="empty-tip">暂无签到记录</div>';
-    done.forEach(function (s) {
-      var d = document.createElement('div');
-      d.className = 'chk-item';
-      d.innerHTML = '<span class="dot dot-ok"></span>' + esc(s.name) + '<span class="muted" style="font-size:12px;">' + esc(s.org) + '</span><span class="t">' + fmtTime(s.ts) + '</span>';
-      $('doneList').appendChild(d);
-    });
-  }).catch(function(e){ console.error('refreshChecks error:', e); });
-}
-$('refreshBtn').addEventListener('click', refreshChecks);
-$('refreshCheckBtn').addEventListener('click', refreshChecks);
-
-/* 导出 CSV */
-$('exportBtn').addEventListener('click', function () {
-  var b = currentBatch();
-  if (!b || !b.students.length) { toast('当前批次无名单'); return; }
-  mergedChecks().then(function (checks) {
-    var doneMap = {};
-    checks.forEach(function (c) { doneMap[c.batch + '|' + c.name] = c; });
-    var lines = ['入职日期,姓名,所属钉钉,签到时间,状态'];
-    b.students.forEach(function (s) {
-      var c = doneMap[b.date + '|' + s.name];
-      var row = [b.date, s.name, s.org, c ? fmtTime(c.ts) : '', c ? '已签到' : '未签到'];
-      lines.push(row.map(function (v) { return '"' + String(v).replace(/"/g, '""') + '"'; }).join(','));
-    });
-    var blob = new Blob(['\ufeff' + lines.join('\n')], { type: 'text/csv;charset=utf-8' });
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = '签到统计_' + b.date + '.csv';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    URL.revokeObjectURL(a.href);
+  var checkMap = {};
+  config.checks.forEach(function(c){checkMap[c.name] = c});
+  config.students.forEach(function(s, idx) {
+    var arch = matchArch(s.org);
+    var c = checkMap[s.name];
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td>' + (idx+1) + '</td>' +
+      '<td>' + esc(s.name) + '</td>' +
+      '<td>' + esc(s.org || '') + '</td>' +
+      '<td>' + (arch ? '<span class="match-tag ok">' + esc(arch.name) + '</span>' : '<span class="match-tag fail">未匹配</span>') + '</td>' +
+      '<td>' + (c ? fmtTime(c.ts) : '-') + '</td>' +
+      '<td>' + (c ? '<span class="match-tag ok">已签到</span>' : '<span class="match-tag fail">未签到</span>') + '</td>';
+    tb.appendChild(tr);
   });
+}
+function renderCheckStats() {
+  var total = config.students.length;
+  var checked = config.checks.filter(function(c){return config.students.some(function(s){return s.name === c.name})}).length;
+  var unchecked = total - checked;
+  $('checkStats').innerHTML =
+    '<div class="stat-item"><div class="num">' + total + '</div><div class="label">应签到</div></div>' +
+    '<div class="stat-item"><div class="num" style="color:#16a34a">' + checked + '</div><div class="label">已签到</div></div>' +
+    '<div class="stat-item"><div class="num" style="color:#dc2626">' + unchecked + '</div><div class="label">未签到</div></div>';
+}
+$('refreshCheckBtn').addEventListener('click', function() {
+  renderCheckRows();
+  renderCheckStats();
+  toast('已刷新');
+});
+$('exportCheckBtn').addEventListener('click', function() {
+  var lines = ['姓名,所属钉钉,匹配架构,签到时间,状态'];
+  var checkMap = {};
+  config.checks.forEach(function(c){checkMap[c.name] = c});
+  config.students.forEach(function(s) {
+    var arch = matchArch(s.org);
+    var c = checkMap[s.name];
+    lines.push([s.name, s.org, arch ? arch.name : '未匹配', c ? fmtTime(c.ts) : '', c ? '已签到' : '未签到'].map(function(v){return '"'+String(v).replace(/"/g,'""')+'"'}).join(','));
+  });
+  var blob = new Blob(['\ufeff' + lines.join('\n')], {type: 'text/csv;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '签到情况.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
 });
 
-/* ---- 设置面板 ---- */
-function loadSettingPanel() {
-  var c = settings.cloud || {};
-  $('cloudOn').value = c.on === 1 ? '1' : '0';
-  $('cloudId').value = c.envId || '';
-  $('cloudKey').value = c.apiKey || '';
-  $('cloudClass').value = c.className || 'SignChecks';
-  $('cloudMsg').textContent = '';
-}
-function saveCloud() {
-  settings.cloud = {
-    on: Number($('cloudOn').value),
-    envId: $('cloudId').value.trim(),
-    apiKey: $('cloudKey').value.trim(),
-    region: 'ap-shanghai',
-    className: $('cloudClass').value.trim() || 'SignChecks'
+/* ---- 导出配置 ---- */
+$('exportConfigBtn').addEventListener('click', function() {
+  var data = {
+    version: new Date().toISOString(),
+    archs: config.archs,
+    students: config.students
   };
-  _tcbApp = null; /* 重置 SDK 实例，让新配置生效 */
-  _tcbDb = null;
-  setLS(LS_KEYS.settings, settings);
-}
-$('exportConfigBtn').addEventListener('click', exportConfig);
+  var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'config.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+  toast('配置已导出为 config.json');
+});
 
 /* ---- 面板切换 ---- */
-document.querySelectorAll('.tab').forEach(function (t) {
-  t.addEventListener('click', function () {
-    document.querySelectorAll('.tab').forEach(function (x) { x.classList.remove('active'); });
+document.querySelectorAll('.tab').forEach(function(t) {
+  t.addEventListener('click', function() {
+    document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active')});
     t.classList.add('active');
-    document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.add('hide'); });
+    document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.add('hide')});
     $('panel-' + t.getAttribute('data-tab')).classList.remove('hide');
-    if (t.getAttribute('data-tab') === 'check') { refreshChecks(); }
   });
 });
 
 /* ---- 顶部事件 ---- */
-$('logoutBtn').addEventListener('click', function () {
+$('logoutBtn').addEventListener('click', function() {
   sessionStorage.removeItem(SESSION_ADMIN);
   location.hash = '#/';
 });
-$('adminEntry').addEventListener('click', function () { location.hash = '#/admin'; });
-$('searchBtn').addEventListener('click', doSearch);
-$('kw').addEventListener('keydown', function (e) { if (e.key === 'Enter') { doSearch(); } });
+$('adminEntry').addEventListener('click', function() { location.hash = '#/admin'; });
+
+/* ---- 加载远程配置（学员端自动同步） ---- */
+function loadRemoteConfig() {
+  if (window.innerWidth >= 768) return; /* 管理端用本地配置 */
+  fetch('config.json?v=' + Date.now(), {cache: 'no-store'})
+    .then(function(r) { if (!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .then(function(cfg) {
+      if (cfg && Array.isArray(cfg.archs)) config.archs = cfg.archs;
+      if (cfg && Array.isArray(cfg.students)) config.students = cfg.students;
+      saveConfig();
+      console.log('Remote config loaded, archs:', config.archs.length, 'students:', config.students.length);
+      renderHomeTip();
+    })
+    .catch(function(e) { console.warn('Remote config load failed:', e.message); });
+}
 
 /* ---------------- 启动 ---------------- */
-$('siteTitle').textContent = settings.title || DEFAULTS.title;
-$('siteOrg').textContent = settings.orgName || '';
-document.title = settings.title || '培训签到系统';
-
-/* 手机端先加载远程配置，再渲染；管理端直接用本地配置 */
-loadRemoteConfig().then(function () {
-  route();
-});
+document.title = '培训签到系统';
+loadRemoteConfig();
+route();
 })();
 </script>
 </body>
