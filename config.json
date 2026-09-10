@@ -1,18 +1,18 @@
 {
-  "version": "2026-09-10T05:57:38.499Z",
+  "version": "2026-09-10T00:00:00.000Z",
   "exportedAt": 1789019858500,
-  "currentBatch": "",
+  "currentBatch": "2026-09-15",
+  "archs": [
+    {
+      "id": "A",
+      "name": "A架构",
+      "joinUrl": "https://h5.dingtalk.com/invite-page/index.html?corpId=test",
+      "formUrl": "https://dturl.co/test"
+    }
+  ],
   "batches": [
     {
       "date": "2026-09-15",
-      "archs": [
-        {
-          "id": "A",
-          "name": "A架构",
-          "joinUrl": "https://h5.dingtalk.com/invite-page/index.html?corpId=test",
-          "formUrl": "https://dturl.co/test"
-        }
-      ],
       "students": [
         {
           "name": "张三",

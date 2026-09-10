@@ -305,7 +305,7 @@
 
   <!-- 架构 -->
   <div class="card tab-panel hide" id="panel-arch">
-    <div class="card-title">架构配置（当前批次：<span id="archBatchTag"></span>）</div>
+    <div class="card-title">架构配置（<span id="archBatchTag"></span>）</div>
     <div id="archList"></div>
     <div class="toolbar" style="margin-top:12px;">
       <button class="btn btn-ghost" id="addArchBtn" type="button">+ 添加架构</button>
@@ -456,6 +456,7 @@ var DEFAULTS = {
   title: "培训签到系统",
   orgName: "",
   adminPassword: "0288",
+  archs: [], /* 全局架构配置，一次填写始终有效 */
   cloud: {
     on: 0,
     envId: "signin-d4gx1kkdf90dedf0e",
@@ -483,6 +484,7 @@ function setLS(key, val) {
 
 /* ---------------- 状态 ---------------- */
 var settings = Object.assign({}, DEFAULTS, getLS(LS_KEYS.settings, {}));
+settings.adminPassword = DEFAULTS.adminPassword; /* 密码固定，不被旧缓存覆盖 */
 var batches = getLS(LS_KEYS.batches, []); if (!Array.isArray(batches)) { batches = []; }
 var checksLocal = getLS(LS_KEYS.checks, []); if (!Array.isArray(checksLocal)) { checksLocal = []; }
 
@@ -550,6 +552,7 @@ function exportConfig() {
     version: new Date().toISOString(),
     exportedAt: Date.now(),
     currentBatch: settings.current || '',
+    archs: settings.archs || [], /* 全局架构 */
     batches: batches
   };
   var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json;charset=utf-8' });
@@ -578,9 +581,11 @@ function loadRemoteConfig() {
       if (cfg && Array.isArray(cfg.batches)) {
         batches = cfg.batches;
         saveBatches();
-        if (cfg.currentBatch) { settings.current = cfg.currentBatch; setLS(LS_KEYS.settings, settings); }
+        if (Array.isArray(cfg.archs)) { settings.archs = cfg.archs; } /* 加载全局架构 */
+        if (cfg.currentBatch) { settings.current = cfg.currentBatch; }
+        setLS(LS_KEYS.settings, settings);
         _remoteConfigLoaded = true;
-        console.log('Remote config loaded, batches:', batches.length);
+        console.log('Remote config loaded, batches:', batches.length, 'archs:', (settings.archs || []).length);
         return true;
       }
       return false;
@@ -793,15 +798,15 @@ function findStudent(name, batch) {
   if (hit.length > 1) { return { type: 'ambiguous', list: hit }; }
   return { type: 'notfound' };
 }
-function matchArch(batch, org) {
-  var list = batch.archs || [];
+function matchArch(org) {
+  var list = settings.archs || []; /* 全局架构 */
   for (var i = 0; i < list.length; i++) {
     if (list[i].name === org || list[i].id === org) { return list[i]; }
   }
   return null;
 }
 function renderOk(student, batch) {
-  var arch = matchArch(batch, student.org);
+  var arch = matchArch(student.org); /* 从全局架构匹配 */
   var archName = arch ? arch.name : (student.org || '未配置');
   var now = new Date();
   var timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
@@ -842,7 +847,7 @@ function doSearch() {
   var box = $('ambList');
   box.innerHTML = '';
   res.list.forEach(function (s) {
-    var arch = matchArch(b, s.org);
+    var arch = matchArch(s.org); /* 从全局架构匹配 */
     var btn = document.createElement('button');
     btn.className = 'btn btn-ghost btn-sm';
     btn.style.margin = '0 8px 8px 0';
@@ -879,12 +884,12 @@ function reloadAll() {
   var b = currentBatch();
   fillBatchSelect();
   renderBatchTable();
-  archDraft = b ? (b.archs || []).map(function (a) { return Object.assign({}, a); }) : [];
+  archDraft = (settings.archs || []).map(function (a) { return Object.assign({}, a); }); /* 全局架构，不随批次变化 */
   stuDraft = b ? (b.students || []).map(function (s) { return Object.assign({}, s); }) : [];
   dirty = false;
   renderArchRows();
   renderStuRows();
-  $('archBatchTag').textContent = b ? b.date : '（无）';
+  $('archBatchTag').textContent = '全局配置（所有批次共用）';
   $('stuBatchTag').textContent = b ? b.date : '（无）';
   $('checkBatchTag').textContent = b ? b.date : '（无）';
   refreshChecks();
@@ -927,7 +932,7 @@ function renderBatchTable() {
       var isCur = b.date === settings.current;
       tr.innerHTML =
         '<td><b>' + esc(b.date) + '</b>' + (isCur ? ' <span class="arch-tag" style="margin-left:6px;padding:2px 8px;">当前</span>' : '') + '</td>' +
-        '<td>' + (b.archs || []).length + '</td>' +
+        '<td>-</td>' +
         '<td>' + (b.students || []).length + '</td>' +
         '<td>' + done + '</td>' +
         '<td><button class="btn btn-ghost btn-sm" data-act="cur" data-date="' + esc(b.date) + '">设为当前</button> ' +
@@ -938,7 +943,7 @@ function renderBatchTable() {
       btn.addEventListener('click', function () {
         var date = btn.getAttribute('data-date');
         if (btn.getAttribute('data-act') === 'cur') { setCurrent(date); reloadAll(); }
-        else if (confirm('确定删除批次 ' + date + '？其名单与架构配置将一并删除。')) {
+        else if (confirm('确定删除批次 ' + date + '？其名单将一并删除。')) {
           batches = batches.filter(function (x) { return x.date !== date; });
           if (settings.current === date) { settings.current = batches.length ? batches[0].date : ''; }
           setLS(LS_KEYS.settings, settings);
@@ -952,7 +957,7 @@ function renderBatchTable() {
 $('addBatchBtn').addEventListener('click', function () {
   var date = $('newBatchDate').value || todayStr();
   if (getBatch(date)) { toast('该日期批次已存在'); return; }
-  batches.push({ date: date, archs: [], students: [] });
+  batches.push({ date: date, students: [] });
   saveBatches();
   setCurrent(date);
   $('newBatchDate').value = '';
@@ -1000,12 +1005,10 @@ $('addArchBtn').addEventListener('click', function () {
   markDirty();
 });
 $('saveArchBtn').addEventListener('click', function () {
-  var b = currentBatch();
-  if (!b) { toast('请先创建批次'); return; }
-  b.archs = archDraft.filter(function (a) { return (a.id && a.id.trim()) || (a.name && a.name.trim()); });
-  saveBatches();
+  settings.archs = archDraft.filter(function (a) { return (a.id && a.id.trim()) || (a.name && a.name.trim()); });
+  setLS(LS_KEYS.settings, settings);
   dirty = false;
-  toast('架构配置已保存');
+  toast('架构配置已保存（全局生效，所有批次共用）');
   reloadAll();
 });
 
