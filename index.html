@@ -358,13 +358,14 @@
 
     <div style="height:18px;"></div>
     <div class="card-title">云同步（实时签到统计）</div>
+    <div class="tip">已默认配置腾讯云开发 CloudBase，跨设备实时查看签到记录。</div>
     <div class="field">
-      <label>启用云同步（LeanCloud 免费版，需先注册获取 AppID / AppKey）</label>
+      <label>启用云同步</label>
       <select id="cloudOn"><option value="0">关闭（仅本机浏览器可看签到记录）</option><option value="1">开启（跨设备实时统计）</option></select>
     </div>
-    <div class="field"><label>AppID</label><input id="cloudId" type="text" placeholder="LeanCloud AppID"></div>
-    <div class="field"><label>AppKey</label><input id="cloudKey" type="text" placeholder="LeanCloud AppKey"></div>
-    <div class="field"><label>数据表名（可保持默认）</label><input id="cloudClass" type="text" value="SignChecks"></div>
+    <div class="field"><label>环境 ID</label><input id="cloudId" type="text" placeholder="腾讯云开发环境 ID"></div>
+    <div class="field"><label>API Key</label><input id="cloudKey" type="text" placeholder="腾讯云开发 API Key"></div>
+    <div class="field"><label>集合名称（可保持默认）</label><input id="cloudClass" type="text" value="SignChecks"></div>
     <div class="toolbar">
       <button class="btn" id="saveCloudBtn" type="button">保存云配置</button>
       <button class="btn btn-ghost" id="testCloudBtn" type="button">测试连接</button>
@@ -423,6 +424,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   }
 })();
 </script>
+<script src="https://static.cloudbase.net/cloudbase-js-sdk/2.17.3/cloudbase.full.js"></script>
 <script src="https://registry.npmmirror.com/xlsx/0.18.5/files/dist/xlsx.full.min.js"></script>
 <script>if (typeof XLSX === 'undefined'){var s2=document.createElement('script');s2.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';document.head.appendChild(s2);}</script>
 
@@ -440,7 +442,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 var DEFAULTS = {
   title: "培训签到系统",
   orgName: "",
-  adminPassword: "0288"   /* ← 管理员固定密码，上线前请修改（设置页或此处） */
+  adminPassword: "0288",
+  cloud: {
+    on: 1,
+    envId: "signin-d4gx1kkdf90dedf0e",
+    apiKey: "eyJhbGciOiJSUzI1NiIsImtpZCI6IjlkMWRjMzFlLWI0ZDAtNDQ4Yi1hNzZmLWIwY2M2M2Q4MTQ5OCJ9.eyJhdWQiOiJzaWduaW4tZDRneDFra2RmOTBkZWRmMGUiLCJleHAiOjI1MzQwMjMwMDc5OSwiaWF0IjoxNzg5MDEyNzI2LCJhdF9oYXNoIjoia1FiOU85YWVTRmlwejNuSFU0MWN2dyIsInByb2plY3RfaWQiOiJzaWduaW4tZDRneDFra2RmOTBkZWRmMGUiLCJtZXRhIjp7InBsYXRmb3JtIjoiQXBpS2V5In0sImFkbWluaXN0cmF0b3JfaWQiOiIyMDk3ODk2MDc5MjY0NzM5MzI5IiwidXNlcl90eXBlIjoiIiwiY2xpZW50X3R5cGUiOiJjbGllbnRfc2VydmVyIiwiaXNfc3lzdGVtX2FkbWluIjp0cnVlfQ.FAnDLZ-drj3MI_ks-iwyZC9o-Idq75JfdmJSKpgTPOa4qgskIZxsPzDNkENviaISG37BFc0uXOTAfX-eAYAeXvp71eM1Eeofx9IFLS6qsRji8mlM1S4XzS8_f0HjLiKGoYRGpsprPTpWcLiGGA94XNq3Cvgues1s10UwEsPiNi2VA6uqHjZne9Tduhe9xljkmHGTpyhAjtDCdpi9xT25Xx-cwCezgE0_Qa10WDxRx5coZZpGJso1Vu9bvKCOp_fLiEeyXCcGH_3LAQx9FM1cbC4dG1XiE95JV6z_xCXlwlDlS8_vW2j2P83N7S8G8EKDh4jVb4hdgivDZp-5IXNTyg",
+    region: "ap-shanghai",
+    className: "SignChecks"
+  }
 };
 
 var LS_KEYS = {
@@ -464,40 +473,60 @@ var settings = Object.assign({}, DEFAULTS, getLS(LS_KEYS.settings, {}));
 var batches = getLS(LS_KEYS.batches, []); if (!Array.isArray(batches)) { batches = []; }
 var checksLocal = getLS(LS_KEYS.checks, []); if (!Array.isArray(checksLocal)) { checksLocal = []; }
 
-/* ---------------- 云同步（LeanCloud REST，可选） ---------------- */
-var LC_API = 'https://api.leancloud.cn';
+/* ---------------- 云同步（腾讯云开发 CloudBase，可选） ---------------- */
+var _tcbApp = null;
+var _tcbDb = null;
 function cloudConf() { var c = settings.cloud; return c && c.on === 1 ? c : null; }
-function lcClass() { var c = cloudConf(); return encodeURIComponent((c && c.className) || 'SignChecks'); }
-function lcHeaders() {
+function tcbInit() {
   var c = cloudConf();
-  return { 'X-LC-Id': c.appId, 'X-LC-Key': c.appKey, 'Content-Type': 'application/json' };
-}
-function lcFetchChecks() {
-  var c = cloudConf();
-  if (!c) { return Promise.resolve([]); }
-  return fetch(LC_API + '/1.1/classes/' + lcClass() + '?where=' +
-      encodeURIComponent(JSON.stringify({})) + '&limit=1000&order=ts', { headers: lcHeaders() })
-    .then(function (r) { if (!r.ok) { throw new Error('HTTP ' + r.status); } return r.json(); })
-    .then(function (j) {
-      return (j.results || []).map(function (x) {
-        return { batch: x.batch, name: x.name, org: x.org, ts: x.ts };
-      });
+  if (!c) { return null; }
+  if (_tcbApp && _tcbApp.config && _tcbApp.config.env === c.envId) { return _tcbDb; }
+  try {
+    if (typeof cloudbase === 'undefined') { throw new Error('CloudBase SDK 未加载'); }
+    _tcbApp = cloudbase.init({
+      env: c.envId,
+      accessKey: c.apiKey,
+      region: c.region || 'ap-shanghai'
     });
+    _tcbDb = _tcbApp.database();
+    return _tcbDb;
+  } catch (e) {
+    console.error('CloudBase init error:', e);
+    return null;
+  }
 }
-function lcFindOne(batch, name) {
+function tcbCollection() {
+  var db = tcbInit();
   var c = cloudConf();
-  if (!c) { return Promise.resolve(null); }
-  return fetch(LC_API + '/1.1/classes/' + lcClass() + '?where=' +
-      encodeURIComponent(JSON.stringify({ batch: batch, name: name })) + '&limit=1', { headers: lcHeaders() })
-    .then(function (r) { return r.json(); })
-    .then(function (j) { return (j.results && j.results.length) ? j.results[0] : null; });
+  if (!db || !c) { return null; }
+  return db.collection(c.className || 'SignChecks');
 }
-function lcCreate(obj) {
-  var c = cloudConf();
-  if (!c) { return Promise.resolve(); }
-  return fetch(LC_API + '/1.1/classes/' + lcClass(), {
-    method: 'POST', headers: lcHeaders(), body: JSON.stringify(obj)
-  }).then(function (r) { if (!r.ok) { throw new Error('HTTP ' + r.status); } return r.json(); });
+function tcbFetchChecks() {
+  var col = tcbCollection();
+  if (!col) { return Promise.resolve([]); }
+  return col.limit(1000).get().then(function (res) {
+    return (res.data || []).map(function (x) {
+      return { batch: x.batch, name: x.name, org: x.org, ts: x.ts };
+    });
+  }).catch(function (e) {
+    console.error('CloudBase fetch error:', e);
+    return [];
+  });
+}
+function tcbFindOne(batch, name) {
+  var col = tcbCollection();
+  if (!col) { return Promise.resolve(null); }
+  return col.where({ batch: batch, name: name }).limit(1).get().then(function (res) {
+    return (res.data && res.data.length) ? res.data[0] : null;
+  }).catch(function () { return null; });
+}
+function tcbCreate(obj) {
+  var col = tcbCollection();
+  if (!col) { return Promise.resolve(); }
+  return col.add(obj).catch(function (e) {
+    console.error('CloudBase create error:', e);
+    throw e;
+  });
 }
 
 /* 合并本地 + 云端签到记录（按 批次+姓名 去重，保留最早时间） */
@@ -510,7 +539,7 @@ function mergedChecks() {
   }
   checksLocal.forEach(put);
   if (cloudConf()) {
-    return lcFetchChecks().then(function (list) { list.forEach(put); return Object.keys(map).map(function (k) { return map[k]; }); });
+    return tcbFetchChecks().then(function (list) { list.forEach(put); return Object.keys(map).map(function (k) { return map[k]; }); });
   }
   return Promise.resolve(Object.keys(map).map(function (k) { return map[k]; }));
 }
@@ -526,9 +555,9 @@ function recordCheck(student, batchDate) {
   }
   var c = cloudConf();
   if (c) {
-    return lcFindOne(rec.batch, rec.name).then(function (old) {
+    return tcbFindOne(rec.batch, rec.name).then(function (old) {
       if (old) { return; }
-      return lcCreate({ batch: rec.batch, name: rec.name, org: rec.org, ts: rec.ts });
+      return tcbCreate({ batch: rec.batch, name: rec.name, org: rec.org, ts: rec.ts });
     }).catch(function () { /* 云失败不影响本地 */ });
   }
   return Promise.resolve();
@@ -982,7 +1011,7 @@ function refreshChecks() {
     $('doneList').innerHTML = '';
     return;
   }
-  $('syncNote').textContent = cloudConf() ? '云同步已开启：统计为全设备实时数据。' : '云同步未开启：仅本机浏览器的签到记录。开启后可在任意设备实时查看（设置页配置）。';
+  $('syncNote').textContent = cloudConf() ? '云同步已开启（腾讯云开发）：统计为全设备实时数据。' : '云同步未开启：仅本机浏览器的签到记录。开启后可在任意设备实时查看（设置页配置）。';
   mergedChecks().then(function (checks) {
     var doneMap = {};
     checks.forEach(function (c) { doneMap[c.batch + '|' + c.name] = c; });
@@ -1040,18 +1069,21 @@ $('exportBtn').addEventListener('click', function () {
 function loadSettingPanel() {
   var c = settings.cloud || {};
   $('cloudOn').value = c.on === 1 ? '1' : '0';
-  $('cloudId').value = c.appId || '';
-  $('cloudKey').value = c.appKey || '';
+  $('cloudId').value = c.envId || '';
+  $('cloudKey').value = c.apiKey || '';
   $('cloudClass').value = c.className || 'SignChecks';
   $('cloudMsg').textContent = '';
 }
 function saveCloud() {
   settings.cloud = {
     on: Number($('cloudOn').value),
-    appId: $('cloudId').value.trim(),
-    appKey: $('cloudKey').value.trim(),
+    envId: $('cloudId').value.trim(),
+    apiKey: $('cloudKey').value.trim(),
+    region: 'ap-shanghai',
     className: $('cloudClass').value.trim() || 'SignChecks'
   };
+  _tcbApp = null; /* 重置 SDK 实例，让新配置生效 */
+  _tcbDb = null;
   setLS(LS_KEYS.settings, settings);
 }
 $('saveCloudBtn').addEventListener('click', function () {
@@ -1061,12 +1093,12 @@ $('saveCloudBtn').addEventListener('click', function () {
 });
 $('testCloudBtn').addEventListener('click', function () {
   saveCloud();
-  if (!cloudConf()) { toast('请先开启云同步并填写 AppID / AppKey'); return; }
-  lcFetchChecks().then(function () {
+  if (!cloudConf()) { toast('请先开启云同步并填写环境 ID / API Key'); return; }
+  tcbFetchChecks().then(function () {
     $('cloudMsg').textContent = '连接成功：可正常读写签到数据。';
     toast('云连接成功');
   }).catch(function (err) {
-    $('cloudMsg').textContent = '连接失败：' + err.message + '。请检查 AppID / AppKey 是否正确。';
+    $('cloudMsg').textContent = '连接失败：' + (err && err.message ? err.message : err) + '。请检查环境 ID / API Key 是否正确。';
     toast('云连接失败');
   });
 });
