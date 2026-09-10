@@ -973,12 +973,22 @@ $('adminEntry').addEventListener('click', function() { location.hash = '#/admin'
 
 /* ---- 加载远程配置（学员端自动同步） ---- */
 function loadRemoteConfig() {
-  if (window.innerWidth >= 768) return; /* 管理端用本地配置 */
+  /* 管理后台不加载远程配置，避免覆盖本地编辑的数据 */
+  if (location.hash.indexOf('#/admin') === 0) return;
+  /* 宽屏（电脑端）也不加载远程配置，管理端用本地配置 */
+  if (window.innerWidth >= 768) return;
   fetch('config.json?v=' + Date.now(), {cache: 'no-store'})
     .then(function(r) { if (!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
     .then(function(cfg) {
-      if (cfg && Array.isArray(cfg.archs)) config.archs = cfg.archs;
-      if (cfg && Array.isArray(cfg.students)) config.students = cfg.students;
+      if (!cfg) return;
+      /* 只有远程架构非空时才覆盖 */
+      if (Array.isArray(cfg.archs) && cfg.archs.length > 0) {
+        config.archs = cfg.archs;
+      }
+      /* 只有远程名单非空时才覆盖，避免空数据清空本地名单 */
+      if (Array.isArray(cfg.students) && cfg.students.length > 0) {
+        config.students = cfg.students;
+      }
       saveConfig();
       console.log('Remote config loaded, archs:', config.archs.length, 'students:', config.students.length);
       renderHomeTip();
