@@ -164,6 +164,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
     <div class="tab active" data-tab="arch">架构配置</div>
     <div class="tab" data-tab="stu">名单管理</div>
     <div class="tab" data-tab="check">签到情况</div>
+    <div class="tab" data-tab="setting">同步设置</div>
   </div>
 
   <!-- 架构配置 -->
@@ -233,6 +234,52 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
       </table>
     </div>
   </div>
+
+  <!-- 同步设置 -->
+  <div class="card tab-panel hide" id="panel-setting">
+    <div class="card-title">GitHub 自动同步设置</div>
+    <div class="tip">
+      配置后，管理后台修改架构或名单会自动同步到 GitHub 仓库的 config.json，学员端扫码会自动加载最新配置。<br>
+      <strong>如何获取 Token：</strong>GitHub 右上角头像 → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token → 勾选 repo 权限 → 生成。
+    </div>
+    <div style="max-width:600px">
+      <div style="margin-bottom:16px">
+        <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px">GitHub Personal Access Token</label>
+        <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="width:100%;padding:10px 12px;border:1px solid #e4e3dd;border-radius:8px;font-size:13px">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+        <div>
+          <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px">仓库所有者</label>
+          <input type="text" id="ghOwner" placeholder="henrybridge004-hub" style="width:100%;padding:10px 12px;border:1px solid #e4e3dd;border-radius:8px;font-size:13px">
+        </div>
+        <div>
+          <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px">仓库名</label>
+          <input type="text" id="ghRepo" placeholder="sign-in" style="width:100%;padding:10px 12px;border:1px solid #e4e3dd;border-radius:8px;font-size:13px">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+        <div>
+          <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px">分支</label>
+          <input type="text" id="ghBranch" placeholder="master" style="width:100%;padding:10px 12px;border:1px solid #e4e3dd;border-radius:8px;font-size:13px">
+        </div>
+        <div>
+          <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px">配置文件路径</label>
+          <input type="text" id="ghPath" placeholder="config.json" style="width:100%;padding:10px 12px;border:1px solid #e4e3dd;border-radius:8px;font-size:13px">
+        </div>
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px">
+          <input type="checkbox" id="ghAutoSync" style="width:16px;height:16px">
+          保存后自动同步到 GitHub
+        </label>
+      </div>
+      <div class="toolbar">
+        <button class="btn btn-primary" id="saveGhBtn" type="button">保存设置</button>
+        <button class="btn btn-ghost" id="manualSyncBtn" type="button">立即同步</button>
+      </div>
+      <div id="syncStatus" style="margin-top:12px;font-size:12px;color:#6b7280"></div>
+    </div>
+  </div>
 </div>
 
 <button class="admin-entry" id="adminEntry" type="button">
@@ -267,7 +314,15 @@ var DEFAULTS = {
     {name: "探讯", joinUrl: "", formUrl: ""}
   ],
   students: [],
-  checks: []
+  checks: [],
+  github: {
+    token: '',
+    owner: 'henrybridge004-hub',
+    repo: 'sign-in',
+    branch: 'master',
+    path: 'config.json',
+    autoSync: true
+  }
 };
 
 var LS_KEY = 'sign_config_v3';
@@ -281,6 +336,7 @@ function getConfig() {
       if (!Array.isArray(v.archs)) v.archs = DEFAULTS.archs.map(function(a){return Object.assign({},a)});
       if (!Array.isArray(v.students)) v.students = [];
       if (!Array.isArray(v.checks)) v.checks = [];
+      if (!v.github || typeof v.github !== 'object') v.github = Object.assign({}, DEFAULTS.github);
       return v;
     }
   } catch (e) {}
@@ -369,6 +425,77 @@ function renderQR(el, text, size) {
     el.innerHTML = '<div style="padding:16px;text-align:center"><div style="font-size:12px;color:#6b7280;margin-bottom:8px">二维码加载失败，请点击下方按钮打开</div><a href="' + esc(text) + '" target="_blank" style="display:inline-block;padding:8px 16px;background:#4a7dff;color:#fff;border-radius:8px;font-size:13px;text-decoration:none">打开链接</a></div>';
   };
   el.appendChild(img);
+}
+
+/* ================= GitHub 自动同步 ================= */
+var syncing = false;
+function syncToGithub(callback) {
+  var gh = config.github;
+  if (!gh || !gh.token) {
+    if (callback) callback(false, '未配置 GitHub Token');
+    return;
+  }
+  if (syncing) {
+    if (callback) callback(false, '正在同步中，请稍候');
+    return;
+  }
+  syncing = true;
+  var data = {
+    version: new Date().toISOString(),
+    archs: config.archs,
+    students: config.students
+  };
+  var contentStr = JSON.stringify(data, null, 2);
+  /* base64 编码（支持中文） */
+  var content = '';
+  try {
+    content = btoa(unescape(encodeURIComponent(contentStr)));
+  } catch (e) {
+    syncing = false;
+    if (callback) callback(false, '编码失败：' + e.message);
+    return;
+  }
+  var apiBase = 'https://api.github.com/repos/' + gh.owner + '/' + gh.repo + '/contents/' + gh.path;
+  /* 1. 获取当前文件 SHA */
+  fetch(apiBase + '?ref=' + gh.branch, {
+    headers: { 'Authorization': 'token ' + gh.token, 'Accept': 'application/vnd.github.v3+json' }
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error('获取文件失败 HTTP ' + r.status);
+    return r.json();
+  })
+  .then(function(file) {
+    /* 2. 更新文件 */
+    return fetch(apiBase, {
+      method: 'PUT',
+      headers: { 'Authorization': 'token ' + gh.token, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
+      body: JSON.stringify({
+        message: 'update config via admin ' + new Date().toLocaleString(),
+        content: content,
+        sha: file.sha,
+        branch: gh.branch
+      })
+    });
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error('更新失败 HTTP ' + r.status);
+    return r.json();
+  })
+  .then(function() {
+    syncing = false;
+    if (callback) callback(true, '同步成功');
+  })
+  .catch(function(e) {
+    syncing = false;
+    if (callback) callback(false, '同步失败：' + e.message);
+  });
+}
+function autoSync() {
+  if (config.github && config.github.autoSync && config.github.token) {
+    syncToGithub(function(ok, msg) {
+      toast(ok ? '已同步到 GitHub' : msg);
+    });
+  }
 }
 
 /* ================= 路由 ================= */
@@ -528,6 +655,7 @@ function reloadAll() {
   renderStuStats();
   renderCheckRows();
   renderCheckStats();
+  loadGhSettings();
 }
 
 /* ---- 架构配置 ---- */
@@ -577,6 +705,7 @@ $('saveArchBtn').addEventListener('click', function() {
   saveConfig();
   toast('架构配置已保存');
   reloadAll();
+  autoSync();
 });
 
 /* ---- 名单管理 ---- */
@@ -636,6 +765,7 @@ $('clearStuBtn').addEventListener('click', function() {
     saveConfig();
     renderStuRows();
     renderStuStats();
+    autoSync();
   }
 });
 $('rematchBtn').addEventListener('click', function() {
@@ -712,6 +842,7 @@ function handleFile(file) {
       renderStuRows();
       renderStuStats();
       toast('成功导入 ' + added + ' 人（跳过重复 ' + (imported.length - added) + ' 人）');
+      autoSync();
     } catch (err) {
       toast('文件解析失败：' + err.message);
     }
@@ -788,6 +919,39 @@ $('exportConfigBtn').addEventListener('click', function() {
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(a.href);
   toast('配置已导出为 config.json');
+});
+
+/* ---- GitHub 同步设置 ---- */
+function loadGhSettings() {
+  var gh = config.github || {};
+  $('ghToken').value = gh.token || '';
+  $('ghOwner').value = gh.owner || 'henrybridge004-hub';
+  $('ghRepo').value = gh.repo || 'sign-in';
+  $('ghBranch').value = gh.branch || 'master';
+  $('ghPath').value = gh.path || 'config.json';
+  $('ghAutoSync').checked = gh.autoSync !== false;
+}
+$('saveGhBtn').addEventListener('click', function() {
+  config.github = {
+    token: $('ghToken').value.trim(),
+    owner: $('ghOwner').value.trim() || 'henrybridge004-hub',
+    repo: $('ghRepo').value.trim() || 'sign-in',
+    branch: $('ghBranch').value.trim() || 'master',
+    path: $('ghPath').value.trim() || 'config.json',
+    autoSync: $('ghAutoSync').checked
+  };
+  saveConfig();
+  toast('GitHub 设置已保存');
+});
+$('manualSyncBtn').addEventListener('click', function() {
+  var status = $('syncStatus');
+  status.textContent = '正在同步...';
+  status.style.color = '#6b7280';
+  syncToGithub(function(ok, msg) {
+    status.textContent = msg + '（' + new Date().toLocaleTimeString() + '）';
+    status.style.color = ok ? '#16a34a' : '#dc2626';
+    toast(msg);
+  });
 });
 
 /* ---- 面板切换 ---- */
