@@ -473,14 +473,14 @@ var settings = Object.assign({}, DEFAULTS, getLS(LS_KEYS.settings, {}));
 var batches = getLS(LS_KEYS.batches, []); if (!Array.isArray(batches)) { batches = []; }
 var checksLocal = getLS(LS_KEYS.checks, []); if (!Array.isArray(checksLocal)) { checksLocal = []; }
 
-/* ---------------- 云同步（腾讯云开发 CloudBase，可选） ---------------- */
+/* ---------------- 云同步（腾讯云开发 CloudBase，通过云函数代理） ---------------- */
 var _tcbApp = null;
-var _tcbDb = null;
+var _tcbFnName = 'http-nodejs-helloworld-q3j3';
 function cloudConf() { var c = settings.cloud; return c && c.on === 1 ? c : null; }
 function tcbInit() {
   var c = cloudConf();
   if (!c) { return null; }
-  if (_tcbApp && _tcbApp.config && _tcbApp.config.env === c.envId) { return _tcbDb; }
+  if (_tcbApp && _tcbApp.config && _tcbApp.config.env === c.envId) { return _tcbApp; }
   try {
     if (typeof cloudbase === 'undefined') { throw new Error('CloudBase SDK 未加载'); }
     _tcbApp = cloudbase.init({
@@ -488,24 +488,28 @@ function tcbInit() {
       accessKey: c.apiKey,
       region: c.region || 'ap-shanghai'
     });
-    _tcbDb = _tcbApp.database();
-    return _tcbDb;
+    return _tcbApp;
   } catch (e) {
     console.error('CloudBase init error:', e);
     return null;
   }
 }
-function tcbCollection() {
-  var db = tcbInit();
+function tcbCall(action, extra) {
+  var app = tcbInit();
   var c = cloudConf();
-  if (!db || !c) { return null; }
-  return db.collection(c.className || 'SignChecks');
+  if (!app || !c) { return Promise.reject(new Error('cloud not configured')); }
+  var data = { action: action, collection: c.className || 'SignChecks' };
+  if (extra) { for (var k in extra) { data[k] = extra[k]; } }
+  return app.callFunction({ name: _tcbFnName, data: data }).then(function (res) {
+    var r = res && res.result ? res.result : res;
+    if (r && r.success === false) { throw new Error(r.error || 'cloud function error'); }
+    return r && r.data !== undefined ? r.data : r;
+  });
 }
 function tcbFetchChecks() {
-  var col = tcbCollection();
-  if (!col) { return Promise.resolve([]); }
-  return col.limit(1000).get().then(function (res) {
-    return (res.data || []).map(function (x) {
+  if (!cloudConf()) { return Promise.resolve([]); }
+  return tcbCall('list', { limit: 1000 }).then(function (list) {
+    return (list || []).map(function (x) {
       return { batch: x.batch, name: x.name, org: x.org, ts: x.ts };
     });
   }).catch(function (e) {
@@ -514,16 +518,14 @@ function tcbFetchChecks() {
   });
 }
 function tcbFindOne(batch, name) {
-  var col = tcbCollection();
-  if (!col) { return Promise.resolve(null); }
-  return col.where({ batch: batch, name: name }).limit(1).get().then(function (res) {
-    return (res.data && res.data.length) ? res.data[0] : null;
+  if (!cloudConf()) { return Promise.resolve(null); }
+  return tcbCall('findOne', { query: { batch: batch, name: name } }).then(function (doc) {
+    return doc || null;
   }).catch(function () { return null; });
 }
 function tcbCreate(obj) {
-  var col = tcbCollection();
-  if (!col) { return Promise.resolve(); }
-  return col.add(obj).catch(function (e) {
+  if (!cloudConf()) { return Promise.resolve(); }
+  return tcbCall('create', { data: obj }).catch(function (e) {
     console.error('CloudBase create error:', e);
     throw e;
   });
