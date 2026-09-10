@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-10T08:08:58.329Z",
+  "version": "2026-09-10T08:14:41.846Z",
   "archs": [
     {
       "name": "探迹",
@@ -13,8 +13,8 @@
     },
     {
       "name": "探域",
-      "joinUrl": "",
-      "formUrl": ""
+      "joinUrl": "https://henrybridge004-hub.github.io/sign-in/#/admin",
+      "formUrl": "https://dturl.co/48VfKWvFn8"
     },
     {
       "name": "汉数",
