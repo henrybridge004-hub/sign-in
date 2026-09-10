@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-10T08:18:12.661Z",
+  "version": "2026-09-10T08:20:18.057Z",
   "archs": [
     {
       "name": "探迹",
@@ -8,8 +8,8 @@
     },
     {
       "name": "探迹智能",
-      "joinUrl": "",
-      "formUrl": ""
+      "joinUrl": "https://h5.dingtalk.com/invite-page/index.html?corpId=ding0c357947f8ea76ebf5bf40eda33b7ba0&inviteCode=1633EGDI9CLUUqC&dtaction=os&org_name=%E5%B9%BF%E5%B7%9E%E6%8E%A2%E8%BF%B9%E6%99%BA%E8%83%BD%E7%A7%91%E6%8A%80%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8",
+      "formUrl": "https://dturl.co/duzmxn0258"
     },
     {
       "name": "探域",
