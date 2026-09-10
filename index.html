@@ -357,20 +357,33 @@
     <div class="tip">管理员密码固定为 <b>0288</b>。</div>
 
     <div style="height:18px;"></div>
-    <div class="card-title">云同步（实时签到统计）</div>
-    <div class="tip">已默认配置腾讯云开发 CloudBase，跨设备实时查看签到记录。</div>
-    <div class="field">
-      <label>启用云同步</label>
-      <select id="cloudOn"><option value="0">关闭（仅本机浏览器可看签到记录）</option><option value="1">开启（跨设备实时统计）</option></select>
+    <div class="card-title">配置导出与部署</div>
+    <div class="tip">
+      学员扫码后会自动从网站加载最新的架构和名单配置。<br>
+      每次修改批次、架构或名单后，请点击下方按钮导出配置文件，然后把下载的 <b>config.json</b> 上传到 GitHub 仓库根目录并推送。
     </div>
-    <div class="field"><label>环境 ID</label><input id="cloudId" type="text" placeholder="腾讯云开发环境 ID"></div>
-    <div class="field"><label>API Key</label><input id="cloudKey" type="text" placeholder="腾讯云开发 API Key"></div>
-    <div class="field"><label>集合名称（可保持默认）</label><input id="cloudClass" type="text" value="SignChecks"></div>
     <div class="toolbar">
-      <button class="btn" id="saveCloudBtn" type="button">保存云配置</button>
-      <button class="btn btn-ghost" id="testCloudBtn" type="button">测试连接</button>
+      <button class="btn" id="exportConfigBtn" type="button">导出配置文件 (config.json)</button>
     </div>
-    <div class="tip" id="cloudMsg"></div>
+    <div class="tip" id="exportMsg"></div>
+
+    <div style="height:18px;"></div>
+    <div class="card-title">部署步骤</div>
+    <div class="tip" style="line-height:1.8;">
+      1. 在「批次管理」中配置好入职日期、架构、名单<br>
+      2. 点击上方「导出配置文件」按钮，下载 config.json<br>
+      3. 把 config.json 放到 GitHub 仓库 sign-in 目录下<br>
+      4. 执行 git add config.json && git commit -m "update config" && git push<br>
+      5. 等待 1-2 分钟，学员扫码即可看到最新配置
+    </div>
+
+    <div style="height:18px;"></div>
+    <div class="card-title">签到记录说明</div>
+    <div class="tip">
+      本方案不使用云数据库，签到记录保存在学员各自的手机浏览器中。<br>
+      学员签到成功后会显示签到凭证（姓名、架构、时间），可截图发到群里核对。<br>
+      管理员可在「签到统计」中导出签到名单模板，现场人工核对。
+    </div>
   </div>
 </div>
 
@@ -444,7 +457,7 @@ var DEFAULTS = {
   orgName: "",
   adminPassword: "0288",
   cloud: {
-    on: 1,
+    on: 0,
     envId: "signin-d4gx1kkdf90dedf0e",
     apiKey: "eyJhbGciOiJSUzI1NiIsImtpZCI6IjlkMWRjMzFlLWI0ZDAtNDQ4Yi1hNzZmLWIwY2M2M2Q4MTQ5OCJ9.eyJpc3MiOiJodHRwczovL3NpZ25pbi1kNGd4MWtrZGY5MGRlZGYwZS5hcC1zaGFuZ2hhaS50Y2ItYXBpLnRlbmNlbnRjbG91ZGFwaS5jb20iLCJzdWIiOiJhbm9uIiwiYXVkIjoic2lnbmluLWQ0Z3gxa2tkZjkwZGVkZjBlIiwiZXhwIjo0MDkyNjk2MzMxLCJpYXQiOjE3ODkwMTMxMzEsIm5vbmNlIjoiMDI0OG9rQTNTRXV2d2E0bDkyMDZDdyIsImF0X2hhc2giOiIwMjQ4b2tBM1NFdXZ3YTRsOTIwNkN3IiwibmFtZSI6IkFub255bW91cyIsInNjb3BlIjoiYW5vbnltb3VzIiwicHJvamVjdF9pZCI6InNpZ25pbi1kNGd4MWtrZGY5MGRlZGYwZSIsIm1ldGEiOnsicGxhdGZvcm0iOiJQdWJsaXNoYWJsZUtleSJ9LCJ1c2VyX3R5cGUiOiIiLCJjbGllbnRfdHlwZSI6ImNsaWVudF91c2VyIiwiaXNfc3lzdGVtX2FkbWluIjpmYWxzZX0.gBZibSn0chhbh2jyR3OolTnMKO4ELCn4BS43KUTym2mXmUxnd3BX9ozZV5b_5_40lDCncoqhxx5O08mBczmxhoDw1rgxr_RsJLHjqQBqvOJ5DYATUCam4YOZcPfyxZk025MHJUb1kTYzzZAvnaqm1Npjz--fFhthLLbpBkJlUmFyppDHpfKXANIGHQusB2CDuJHV3YmhRnXrDUEKb9wejV88_MDllqI6u03v0qdLf-vUJosn9mTtlUdCl0LzASYV9cF92OT3axay_veGNu4gBOrbGrg0yex5Kv4B6ZAxODvWoj_B6anTphuoDhQCrc1D4IxrDz9ko1LyciZV19AOyg",
     region: "ap-shanghai",
@@ -529,6 +542,52 @@ function tcbCreate(obj) {
     console.error('CloudBase create error:', e);
     throw e;
   });
+}
+
+/* ---------------- 配置导出与加载（GitHub Pages 静态方案） ---------------- */
+function exportConfig() {
+  var data = {
+    version: new Date().toISOString(),
+    exportedAt: Date.now(),
+    currentBatch: settings.current || '',
+    batches: batches
+  };
+  var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json;charset=utf-8' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'config.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+  $('exportMsg').textContent = '配置已导出为 config.json，请上传到 GitHub 仓库根目录并推送。';
+  toast('配置已导出');
+}
+
+var _remoteConfigLoaded = false;
+function loadRemoteConfig() {
+  if (_remoteConfigLoaded) { return Promise.resolve(false); }
+  /* 只在手机端（窄屏）加载远程配置，管理端用本地配置 */
+  if (window.innerWidth >= 768) { return Promise.resolve(false); }
+  return fetch('config.json?v=' + Date.now(), { cache: 'no-store' })
+    .then(function (r) {
+      if (!r.ok) { throw new Error('HTTP ' + r.status); }
+      return r.json();
+    })
+    .then(function (cfg) {
+      if (cfg && Array.isArray(cfg.batches)) {
+        batches = cfg.batches;
+        if (cfg.currentBatch) { settings.current = cfg.currentBatch; }
+        _remoteConfigLoaded = true;
+        console.log('Remote config loaded, batches:', batches.length);
+        return true;
+      }
+      return false;
+    })
+    .catch(function (e) {
+      console.warn('Remote config load failed:', e.message);
+      return false;
+    });
 }
 
 /* 合并本地 + 云端签到记录（按 批次+姓名 去重，保留最早时间） */
@@ -743,9 +802,11 @@ function matchArch(batch, org) {
 function renderOk(student, batch) {
   var arch = matchArch(batch, student.org);
   var archName = arch ? arch.name : (student.org || '未配置');
+  var now = new Date();
+  var timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
   $('stAvatar').textContent = (student.name || '?').charAt(0);
   $('stName').textContent = student.name;
-  $('stMeta').textContent = '入职批次：' + batch.date;
+  $('stMeta').textContent = '入职批次：' + batch.date + ' | 签到时间：' + timeStr;
   $('stArchTag').textContent = archName;
 
   var joinUrl = arch ? (arch.joinUrl || '') : '';
@@ -1088,22 +1149,7 @@ function saveCloud() {
   _tcbDb = null;
   setLS(LS_KEYS.settings, settings);
 }
-$('saveCloudBtn').addEventListener('click', function () {
-  saveCloud();
-  toast('云配置已保存');
-  refreshChecks();
-});
-$('testCloudBtn').addEventListener('click', function () {
-  saveCloud();
-  if (!cloudConf()) { toast('请先开启云同步并填写环境 ID / API Key'); return; }
-  tcbFetchChecks().then(function () {
-    $('cloudMsg').textContent = '连接成功：可正常读写签到数据。';
-    toast('云连接成功');
-  }).catch(function (err) {
-    $('cloudMsg').textContent = '连接失败：' + (err && err.message ? err.message : err) + '。请检查环境 ID / API Key 是否正确。';
-    toast('云连接失败');
-  });
-});
+$('exportConfigBtn').addEventListener('click', exportConfig);
 
 /* ---- 面板切换 ---- */
 document.querySelectorAll('.tab').forEach(function (t) {
@@ -1129,7 +1175,11 @@ $('kw').addEventListener('keydown', function (e) { if (e.key === 'Enter') { doSe
 $('siteTitle').textContent = settings.title || DEFAULTS.title;
 $('siteOrg').textContent = settings.orgName || '';
 document.title = settings.title || '培训签到系统';
-route();
+
+/* 手机端先加载远程配置，再渲染；管理端直接用本地配置 */
+loadRemoteConfig().then(function () {
+  route();
+});
 })();
 </script>
 </body>
