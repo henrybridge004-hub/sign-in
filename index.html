@@ -314,21 +314,32 @@ function fmtTime(ts) {
   return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());
 }
 
+/* 形近字归一化（港/岗、帐/账等常见错别字） */
+function normalizeOrg(s) {
+  return String(s).replace(/港/g, '岗').replace(/帐/g, '账').replace(/份/g, '分').replace(/坐/g, '座');
+}
+
 /* 模糊匹配架构 */
 function matchArch(org) {
   if (!org) return null;
   var orgStr = String(org).trim();
   if (!orgStr) return null;
+  var orgNorm = normalizeOrg(orgStr);
   var archs = config.archs || [];
-  /* 1. 精确匹配 */
+  /* 1. 精确匹配（原文） */
   for (var i = 0; i < archs.length; i++) {
     if (archs[i].name === orgStr) return archs[i];
   }
-  /* 2. 包含匹配（优先匹配更长的架构名，更精确） */
+  /* 2. 精确匹配（归一化后） */
+  for (var i = 0; i < archs.length; i++) {
+    if (normalizeOrg(archs[i].name) === orgNorm) return archs[i];
+  }
+  /* 3. 包含匹配（优先匹配更长的架构名，更精确） */
   var candidates = [];
   for (var i = 0; i < archs.length; i++) {
     var name = archs[i].name;
-    if (name && (orgStr.indexOf(name) !== -1 || name.indexOf(orgStr) !== -1)) {
+    var nameNorm = normalizeOrg(name);
+    if (name && (orgStr.indexOf(name) !== -1 || name.indexOf(orgStr) !== -1 || orgNorm.indexOf(nameNorm) !== -1 || nameNorm.indexOf(orgNorm) !== -1)) {
       candidates.push({arch: archs[i], len: name.length});
     }
   }
@@ -342,8 +353,20 @@ function matchArch(org) {
 /* 渲染二维码 */
 function renderQR(el, text, size) {
   el.innerHTML = '';
-  if (!text) { el.innerHTML = '<div style="color:#9ca3af;font-size:12px;padding:20px;text-align:center">未配置链接</div>'; return; }
-  new QRCode(el, { text: text, width: size || 200, height: size || 200, correctLevel: QRCode.CorrectLevel.M });
+  if (!text) {
+    el.innerHTML = '<div style="color:#9ca3af;font-size:12px;padding:20px;text-align:center">未配置链接</div>';
+    return;
+  }
+  try {
+    if (typeof QRCode !== 'undefined') {
+      new QRCode(el, { text: text, width: size || 200, height: size || 200, correctLevel: QRCode.CorrectLevel.M });
+    } else {
+      throw new Error('QRCode library not loaded');
+    }
+  } catch (e) {
+    /* fallback：显示链接文本 */
+    el.innerHTML = '<div style="padding:16px;text-align:center"><div style="font-size:12px;color:#6b7280;margin-bottom:8px">二维码加载失败，请点击下方按钮打开</div><a href="' + esc(text) + '" target="_blank" style="display:inline-block;padding:8px 16px;background:#4a7dff;color:#fff;border-radius:8px;font-size:13px;text-decoration:none">打开链接</a></div>';
+  }
 }
 
 /* ================= 路由 ================= */
@@ -414,7 +437,7 @@ function renderOk(student) {
       '<div class="step-btns">';
     if (joinUrl) html += '<a class="step-btn" href="' + esc(joinUrl) + '" target="_blank">在钉钉中打开</a>';
     html += '</div>';
-    if (joinUrl) html += '<div class="qr-box"><div id="qr1"></div><div class="qr-label">或用钉钉扫码加入</div></div>';
+    html += '<div class="qr-box"><div id="qr1"></div><div class="qr-label">' + (joinUrl ? '或用钉钉扫码加入' : '管理员尚未配置加入链接') + '</div></div>';
     html += '</div>';
 
     html += '<div class="step-card">' +
@@ -423,7 +446,7 @@ function renderOk(student) {
       '<div class="step-btns">';
     if (formUrl) html += '<a class="step-btn" href="' + esc(formUrl) + '" target="_blank">在钉钉中打开</a>';
     html += '</div>';
-    if (formUrl) html += '<div class="qr-box"><div id="qr2"></div><div class="qr-label">或用钉钉扫码填写</div></div>';
+    html += '<div class="qr-box"><div id="qr2"></div><div class="qr-label">' + (formUrl ? '或用钉钉扫码填写' : '管理员尚未配置登记链接') + '</div></div>';
     html += '</div>';
   } else {
     html += '<div style="padding:12px;background:#fef3c7;color:#92400e;border-radius:8px;font-size:13px;margin-bottom:16px">所属钉钉「' + esc(student.org || '') + '」未匹配到架构，请联系管理员。</div>';
@@ -432,10 +455,13 @@ function renderOk(student) {
   html += '<div class="success-tip">签到成功。请按顺序完成以上两步，均在钉钉内进行。</div></div>';
 
   $('resultArea').innerHTML = html;
-  if (arch) {
-    if (arch.joinUrl) renderQR($('qr1'), arch.joinUrl, 140);
-    if (arch.formUrl) renderQR($('qr2'), arch.formUrl, 140);
-  }
+  /* 延迟渲染二维码，确保DOM就绪 */
+  setTimeout(function() {
+    if (arch) {
+      if (arch.joinUrl && $('qr1')) renderQR($('qr1'), arch.joinUrl, 140);
+      if (arch.formUrl && $('qr2')) renderQR($('qr2'), arch.formUrl, 140);
+    }
+  }, 50);
 
   /* 记录签到 */
   var exists = config.checks.some(function(c){return c.name === student.name});
