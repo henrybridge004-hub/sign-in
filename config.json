@@ -1,20 +1,20 @@
 {
-  "version": "2026-09-10T08:34:50.369Z",
+  "version": "2026-09-17T08:37:42.126Z",
   "archs": [
     {
       "name": "探迹",
-      "joinUrl": "https://h5.dingtalk.com/invite-page/index.html?corpId=ding9a291c1d7517528d35c2f4657eb6378f&inviteCode=UrsbLbKinWT1twO&dtaction=os&org_name=%E5%B9%BF%E5%B7%9E%E6%8E%A2%E8%BF%B9%E7%A7%91%E6%8A%80%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8",
-      "formUrl": "https://dturl.co/48VfKWvFn8"
+      "joinUrl": "",
+      "formUrl": ""
     },
     {
       "name": "探迹智能",
-      "joinUrl": "https://h5.dingtalk.com/invite-page/index.html?corpId=ding9a291c1d7517528d35c2f4657eb6378f&inviteCode=UrsbLbKinWT1twO&dtaction=os&org_name=%E5%B9%BF%E5%B7%9E%E6%8E%A2%E8%BF%B9%E7%A7%91%E6%8A%80%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8",
-      "formUrl": "https://dturl.co/48VfKWvFn8"
+      "joinUrl": "",
+      "formUrl": ""
     },
     {
       "name": "探域",
-      "joinUrl": "https://henrybridge004-hub.github.io/sign-in/#/admin",
-      "formUrl": "https://dturl.co/48VfKWvFn8"
+      "joinUrl": "",
+      "formUrl": ""
     },
     {
       "name": "汉数",
@@ -39,264 +39,292 @@
   ],
   "students": [
     {
-      "name": "李映",
+      "name": "徐丽",
       "org": "探迹智能"
     },
     {
-      "name": "田奥博",
+      "name": "梁越",
       "org": "探迹智能"
     },
     {
-      "name": "张昌鉴",
+      "name": "张博文",
       "org": "探迹智能"
     },
     {
-      "name": "李静",
+      "name": "吴烁",
       "org": "探迹智能"
     },
     {
-      "name": "赵梁宁",
+      "name": "任红亮",
       "org": "探迹智能"
     },
     {
-      "name": "叶梓冰",
+      "name": "金德生",
       "org": "探迹智能"
     },
     {
-      "name": "刘子啸",
+      "name": "罗晏玢",
       "org": "探迹智能"
     },
     {
-      "name": "王旭",
+      "name": "刘思岑",
       "org": "探迹智能"
     },
     {
-      "name": "王仁和",
+      "name": "曾维萍",
       "org": "探迹智能"
     },
     {
-      "name": "黄丽燕",
+      "name": "张泽霖",
       "org": "探迹智能"
     },
     {
-      "name": "曹格华",
+      "name": "张晓琳",
       "org": "探迹智能"
     },
     {
-      "name": "黄锐",
+      "name": "马高雄",
       "org": "探迹智能"
     },
     {
-      "name": "郭梦影",
+      "name": "姚奕洋",
       "org": "探迹智能"
     },
     {
-      "name": "滕嘉豪",
+      "name": "张何君",
       "org": "探迹智能"
     },
     {
-      "name": "吴贵平",
+      "name": "黎健怡",
       "org": "探迹智能"
     },
     {
-      "name": "邓业静",
+      "name": "梁杨涛",
       "org": "探迹智能"
     },
     {
-      "name": "朱业鹏",
+      "name": "李钰芙",
       "org": "探迹智能"
     },
     {
-      "name": "伍树培",
+      "name": "潘银焘",
       "org": "探迹智能"
     },
     {
-      "name": "蔡坤",
+      "name": "沈莹",
       "org": "探迹智能"
     },
     {
-      "name": "贾相泽",
+      "name": "王尊",
       "org": "探迹智能"
     },
     {
-      "name": "殷羽",
+      "name": "赵慧玲",
       "org": "探迹智能"
     },
     {
-      "name": "廖恒坚",
+      "name": "梁明铭",
       "org": "探迹智能"
     },
     {
-      "name": "周家俊",
+      "name": "李子言",
       "org": "探迹智能"
     },
     {
-      "name": "梁耀晖",
+      "name": "王宝锐",
       "org": "探迹智能"
     },
     {
-      "name": "李亮",
+      "name": "杜浩杰",
       "org": "探迹智能"
     },
     {
-      "name": "陈深笠",
+      "name": "夏义鹏",
       "org": "探迹智能"
     },
     {
-      "name": "张宇轩",
+      "name": "谭梦萍",
       "org": "探迹智能"
     },
     {
-      "name": "穆昭强",
+      "name": "蒋亚鹏",
       "org": "探迹智能"
     },
     {
-      "name": "吴家慧",
+      "name": "张远康",
       "org": "探迹智能"
     },
     {
-      "name": "陈妍",
+      "name": "程鹏",
       "org": "探迹智能"
     },
     {
-      "name": "李梅婷",
+      "name": "江晴",
       "org": "探迹智能"
     },
     {
-      "name": "张宜佳",
+      "name": "贾鑫旭",
       "org": "探迹智能"
     },
     {
-      "name": "侯美岳",
+      "name": "张清",
       "org": "探迹智能"
     },
     {
-      "name": "张俊杰",
+      "name": "黄衍淳",
       "org": "探迹智能"
     },
     {
-      "name": "王一帆",
+      "name": "黄嘉伟",
       "org": "探迹智能"
     },
     {
-      "name": "陈睿智",
+      "name": "崇烨",
       "org": "探迹智能"
     },
     {
-      "name": "李霆晖",
+      "name": "龚毅",
       "org": "探迹智能"
     },
     {
-      "name": "林贻文",
+      "name": "刘俊甫",
       "org": "探迹智能"
     },
     {
-      "name": "梁顺虎",
+      "name": "宋文彬",
+      "org": "探迹智能"
+    },
+    {
+      "name": "王占东",
+      "org": "探迹智能"
+    },
+    {
+      "name": "蔡锡泉",
+      "org": "探迹智能"
+    },
+    {
+      "name": "郑猛",
+      "org": "探迹智能"
+    },
+    {
+      "name": "黄高洪",
+      "org": "探迹智能"
+    },
+    {
+      "name": "付紫莹",
+      "org": "探迹智能"
+    },
+    {
+      "name": "王立伟",
+      "org": "探迹智能"
+    },
+    {
+      "name": "杨锦",
+      "org": "探迹智能"
+    },
+    {
+      "name": "梁清",
+      "org": "探迹智能"
+    },
+    {
+      "name": "吕慧慧",
+      "org": "探迹智能"
+    },
+    {
+      "name": "刘诗露",
+      "org": "探迹智能"
+    },
+    {
+      "name": "梁洪胜",
+      "org": "探迹智能"
+    },
+    {
+      "name": "赵金涛",
+      "org": "探迹智能"
+    },
+    {
+      "name": "胡佳欣",
+      "org": "探迹智能"
+    },
+    {
+      "name": "易土凤",
+      "org": "探迹智能"
+    },
+    {
+      "name": "陈淑贞",
+      "org": "探迹智能"
+    },
+    {
+      "name": "吴嘉城",
+      "org": "探迹智能"
+    },
+    {
+      "name": "黄冬花",
       "org": "探域"
     },
     {
-      "name": "赵晴",
+      "name": "胡家明",
       "org": "探域"
     },
     {
-      "name": "吴永浩",
+      "name": "王勃策",
       "org": "探域"
     },
     {
-      "name": "杜灵桐",
+      "name": "吴狄聪",
       "org": "探域"
     },
     {
-      "name": "丁嘉阳",
+      "name": "肖全磊",
       "org": "探域"
     },
     {
-      "name": "李昊",
+      "name": "章梦耀",
       "org": "探域"
     },
     {
-      "name": "王梦亮",
+      "name": "汤俊峰",
       "org": "探域"
     },
     {
-      "name": "黄伟航",
+      "name": "凌丽茵",
       "org": "探域"
     },
     {
-      "name": "罗城琳",
+      "name": "游海明",
       "org": "探域"
     },
     {
-      "name": "陈俊炜",
+      "name": "戴添乙",
       "org": "探域"
     },
     {
-      "name": "赵沈洁",
+      "name": "王游",
       "org": "探域"
     },
     {
-      "name": "刘宝芳",
+      "name": "杨晓璇",
       "org": "探域"
     },
     {
-      "name": "李书展",
+      "name": "容里广",
       "org": "探域"
     },
     {
-      "name": "金方麟",
-      "org": "探域"
-    },
-    {
-      "name": "段心灵",
-      "org": "探域"
-    },
-    {
-      "name": "魏冰",
-      "org": "探域"
-    },
-    {
-      "name": "黄奕程",
-      "org": "探域"
-    },
-    {
-      "name": "张俊柱",
-      "org": "探域"
-    },
-    {
-      "name": "陈桂超",
-      "org": "探讯"
-    },
-    {
-      "name": "黎晓婷",
-      "org": "数字贸易港"
-    },
-    {
-      "name": "彭家新",
+      "name": "康永珺",
       "org": "探呼"
     },
     {
-      "name": "封可莹",
+      "name": "包炜林",
       "org": "探呼"
     },
     {
-      "name": "林小蕊",
-      "org": "探迹智能"
+      "name": "江旨杰",
+      "org": "探呼"
     },
     {
-      "name": "严必珊",
-      "org": "探迹智能"
-    },
-    {
-      "name": "欧阳立民",
-      "org": "探域"
-    },
-    {
-      "name": "唐桂玉",
-      "org": "探域"
-    },
-    {
-      "name": "朱成雨",
-      "org": "探域"
+      "name": "刘安婕",
+      "org": "探迹"
     }
   ]
 }
