@@ -1,50 +1,50 @@
 {
-  "version": "2026-09-30T10:20:13.314908Z",
+  "version": "2026-09-30T10:38:51.221015Z",
   "archs": [
     {
       "name": "探迹",
-      "inviteImg": "qrcodes/tanji-invite.png",
-      "formImg": "qrcodes/tanji-form.png"
+      "joinUrl": "https://h5.dingtalk.com/invite-page/index.html?corpId=ding9a291c1d7517528d35c2f4657eb6378f&inviteCode=TqYs64iZCExE3ZN&dtaction=os&org_name=%E5%B9%BF%E5%B7%9E%E6%8E%A2%E8%BF%B9%E7%A7%91%E6%8A%80%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8",
+      "formUrl": "https://dturl.co/kuzYZfTrDL"
     },
     {
       "name": "探迹智能",
-      "inviteImg": "qrcodes/tanji-zhineng-invite.png",
-      "formImg": "qrcodes/tanji-zhineng-form.png"
+      "joinUrl": "https://h5.dingtalk.com/invite-page/index.html?corpId=ding0c357947f8ea76ebf5bf40eda33b7ba0&inviteCode=0XaFLO1J3GVhRei&dtaction=os&org_name=%E5%B9%BF%E5%B7%9E%E6%8E%A2%E8%BF%B9%E6%99%BA%E8%83%BD%E7%A7%91%E6%8A%80%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8",
+      "formUrl": "https://dturl.co/AJuKaPPz7k"
     },
     {
       "name": "探域",
-      "inviteImg": "qrcodes/tanyu-invite.png",
-      "formImg": "qrcodes/tanyu-form.png"
+      "joinUrl": "https://h5.dingtalk.com/invite-page/index.html?corpId=ding80f68c7ef298cf63a39a90f97fcb1e09&inviteCode=OJ5E7S4jD6uvzUl&dtaction=os&org_name=%E5%B9%BF%E5%B7%9E%E6%8E%A2%E5%9F%9F%E7%A7%91%E6%8A%80%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8",
+      "formUrl": "https://dturl.co/2MXDjo5Pqm"
     },
     {
       "name": "汉数",
-      "inviteImg": "qrcodes/hanshu-invite.png",
-      "formImg": "qrcodes/hanshu-form.png"
+      "joinUrl": "https://h5.dingtalk.com/invite-page/index.html?corpId=ding9b4a94105a24b4f924f2f5cc6abecb85&inviteCode=hIWfqM8kw9UGr7m&dtaction=os&org_name=%E5%B9%BF%E4%B8%9C%E6%B1%89%E6%95%B0%E7%A7%91%E6%8A%80%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8",
+      "formUrl": "https://dturl.co/jHbMnLwvhH"
     },
     {
       "name": "数字贸易港",
-      "inviteImg": "qrcodes/shuma-invite.png",
-      "formImg": "qrcodes/shuma-form.png"
+      "joinUrl": "https://h5.dingtalk.com/invite-page/index.html?corpId=dingf4101f53d6322e336014b3d6b2f16d97&inviteCode=pzLqAQoukBbD0Xt&dtaction=os&org_name=%E6%8E%A2%E8%BF%B9(%E5%B9%BF%E5%B7%9E)%E6%95%B0%E5%AD%97%E8%B4%B8%E6%98%93%E6%B8%AF%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8",
+      "formUrl": "https://dturl.co/Pal0X1x7YS"
     },
     {
       "name": "探呼",
-      "inviteImg": "qrcodes/tanhu-invite.png",
-      "formImg": "qrcodes/tanhu-form.png"
+      "joinUrl": "https://h5.dingtalk.com/invite-page/index.html?corpId=dinga452eaf8d8a31c33ee0f45d8e4f7c288&inviteCode=tGKC3ewtv3iHe1Z&dtaction=os&org_name=%E6%8E%A2%E8%BF%B9%E5%91%BC%E5%8F%AB%E4%B8%AD%E5%BF%83",
+      "formUrl": "https://dturl.co/tT9vle5u5f"
     },
     {
       "name": "探讯",
-      "inviteImg": "qrcodes/tanxun-invite.png",
-      "formImg": "qrcodes/tanxun-form.png"
+      "joinUrl": "https://h5.dingtalk.com/invite-page/index.html?corpId=ding73644d4491d712b6f2c783f7214b6d69&inviteCode=TaUuiEIfbBoqFaa&dtaction=os&org_name=%E5%B9%BF%E4%B8%9C%E6%8E%A2%E8%AE%AF%E4%BA%92%E8%81%94%E7%A7%91%E6%8A%80%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8",
+      "formUrl": "https://dturl.co/vKdPtaN7Dz"
     },
     {
       "name": "探力",
-      "inviteImg": "qrcodes/tanli-invite.png",
-      "formImg": "qrcodes/tanli-form.png"
+      "joinUrl": "https://h5.dingtalk.com/invite-page/index.html?corpId=ding3d6f00cbc9f504f4bc961a6cb783455b&inviteCode=srkQRUKungLfwpW&dtaction=os&org_name=%E6%8E%A2%E5%8A%9B(%E5%B9%BF%E4%B8%9C)%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E7%A7%91%E6%8A%80%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8",
+      "formUrl": "https://dturl.co/DZVnLfdbo3"
     },
     {
       "name": "探力（济南）",
-      "inviteImg": "qrcodes/tanli-jinan-invite.png",
-      "formImg": "qrcodes/tanli-jinan-form.png"
+      "joinUrl": "https://h5.dingtalk.com/invite-page/index.html?corpId=dingdcd9dc7abaeccc83cffb14fd42212f44&inviteCode=ga4RNwdQ8VIso9k&dtaction=os&org_name=%E6%8E%A2%E5%8A%9B(%E6%B5%8E%E5%8D%97)%E7%A7%91%E6%8A%80%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8",
+      "formUrl": "https://dturl.co/pzoPlKyXhP"
     }
   ],
   "students": [
