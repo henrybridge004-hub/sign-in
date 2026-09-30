@@ -2,7 +2,8 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234A7DFF'/%3E%3Cpath d='M18 33l10 10 18-20' stroke='white' stroke-width='6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -159,38 +160,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
       <button class="btn btn-ghost btn-sm" id="logoutBtn" type="button">退出</button>
     </div>
   </div>
+  <div style="padding:10px 16px;background:#eef2ff;color:#4a7dff;border-radius:8px;font-size:13px;margin-bottom:16px">架构与二维码已固定（9个架构），每周只需更新学员名单。</div>
 
   <div class="tabs">
-    <div class="tab active" data-tab="arch">架构配置</div>
-    <div class="tab" data-tab="stu">名单管理</div>
+    <div class="tab active" data-tab="stu">名单管理</div>
     <div class="tab" data-tab="check">签到情况</div>
     <div class="tab" data-tab="setting">同步设置</div>
-  </div>
-
-  <!-- 架构配置 -->
-  <div class="card tab-panel" id="panel-arch">
-    <div class="card-title">
-      架构配置（全局，所有学员共用）
-    </div>
-    <div class="tip">
-      配置每个架构的「加入钉钉组织邀请链接」和「入职登记链接」。名单导入后会自动根据「所属钉钉」模糊匹配到对应架构。<br>
-      默认架构：探迹、探迹智能、探域、汉数、数字贸易港、探呼、探讯
-    </div>
-    <div class="toolbar">
-      <button class="btn btn-primary btn-sm" id="addArchBtn" type="button">+ 添加架构</button>
-      <button class="btn btn-danger btn-sm" id="clearArchBtn" type="button">一键清空</button>
-    </div>
-    <div class="arch-list" id="archList"></div>
-    <div class="toolbar" style="margin-top:16px">
-      <button class="btn btn-primary" id="saveArchBtn" type="button">保存架构配置</button>
-    </div>
   </div>
 
   <!-- 名单管理 -->
   <div class="card tab-panel hide" id="panel-stu">
     <div class="card-title">名单管理</div>
     <div class="tip">
-      拖入 Excel/CSV 文件，自动提取「姓名」和「所属钉钉」两列。导入后自动模糊匹配架构，匹配不上的会标红提示。
+      每周更新名单：拖入 Excel/CSV 文件，自动提取「姓名」和「所属钉钉」两列，自动匹配到对应架构（架构与二维码已固定）。匹配不上的会标红提示。
     </div>
     <div class="drop-zone" id="dropZone">
       点击或拖入 Excel/CSV 文件导入名单<br>
@@ -239,7 +221,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
   <div class="card tab-panel hide" id="panel-setting">
     <div class="card-title">GitHub 自动同步设置</div>
     <div class="tip">
-      配置后，管理后台修改架构或名单会自动同步到 GitHub 仓库的 config.json，学员端扫码会自动加载最新配置。<br>
+      配置后，管理后台更新名单会自动同步到 GitHub 仓库的 config.json，学员端扫码会自动加载最新名单。<br>
       <strong>如何获取 Token：</strong>GitHub 右上角头像 → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token → 勾选 repo 权限 → 生成。
     </div>
     <div style="max-width:600px">
@@ -305,13 +287,15 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 var DEFAULTS = {
   adminPassword: "0288",
   archs: [
-    {name: "探迹", joinUrl: "", formUrl: ""},
-    {name: "探迹智能", joinUrl: "", formUrl: ""},
-    {name: "探域", joinUrl: "", formUrl: ""},
-    {name: "汉数", joinUrl: "", formUrl: ""},
-    {name: "数字贸易港", joinUrl: "", formUrl: ""},
-    {name: "探呼", joinUrl: "", formUrl: ""},
-    {name: "探讯", joinUrl: "", formUrl: ""}
+    {name: "探迹", inviteImg: "qrcodes/tanji-invite.png", formImg: "qrcodes/tanji-form.png"},
+    {name: "探迹智能", inviteImg: "qrcodes/tanji-zhineng-invite.png", formImg: "qrcodes/tanji-zhineng-form.png"},
+    {name: "探域", inviteImg: "qrcodes/tanyu-invite.png", formImg: "qrcodes/tanyu-form.png"},
+    {name: "汉数", inviteImg: "qrcodes/hanshu-invite.png", formImg: "qrcodes/hanshu-form.png"},
+    {name: "数字贸易港", inviteImg: "qrcodes/shuma-invite.png", formImg: "qrcodes/shuma-form.png"},
+    {name: "探呼", inviteImg: "qrcodes/tanhu-invite.png", formImg: "qrcodes/tanhu-form.png"},
+    {name: "探讯", inviteImg: "qrcodes/tanxun-invite.png", formImg: "qrcodes/tanxun-form.png"},
+    {name: "探力", inviteImg: "qrcodes/tanli-invite.png", formImg: "qrcodes/tanli-form.png"},
+    {name: "探力（济南）", inviteImg: "qrcodes/tanli-jinan-invite.png", formImg: "qrcodes/tanli-jinan-form.png"}
   ],
   students: [],
   checks: [],
@@ -333,7 +317,8 @@ function getConfig() {
   try {
     var v = JSON.parse(localStorage.getItem(LS_KEY));
     if (v && typeof v === 'object') {
-      if (!Array.isArray(v.archs)) v.archs = DEFAULTS.archs.map(function(a){return Object.assign({},a)});
+      /* 架构与二维码固定写死，不从本地存储读取 */
+      v.archs = DEFAULTS.archs.map(function(a){return Object.assign({},a)});
       if (!Array.isArray(v.students)) v.students = [];
       if (!Array.isArray(v.checks)) v.checks = [];
       if (!v.github || typeof v.github !== 'object') v.github = Object.assign({}, DEFAULTS.github);
@@ -353,7 +338,7 @@ function saveConfig() {
 var config = getConfig();
 config.adminPassword = DEFAULTS.adminPassword; /* 密码固定 */
 
-var archDraft = [], stuDraft = [];
+var stuDraft = [];
 
 /* 工具 */
 function $(id) { return document.getElementById(id); }
@@ -584,25 +569,21 @@ function renderOk(student) {
     '</div>';
 
   if (arch) {
-    var joinUrl = arch.joinUrl || '';
-    var formUrl = arch.formUrl || '';
+    var inviteImg = arch.inviteImg || '';
+    var formImg = arch.formImg || '';
     html += '<div class="step-card">' +
       '<div class="step-title"><div class="step-num">1</div><div class="step-name">加入你的架构</div></div>' +
-      '<div class="step-desc">用钉钉打开并确认加入，等待管理员通过。</div>' +
-      '<div class="step-btns">';
-    if (joinUrl) html += '<a class="step-btn" href="' + esc(joinUrl) + '" target="_blank">在钉钉中打开</a>';
-    html += '</div>';
-    html += '<div class="qr-box"><div id="qr1"></div><div class="qr-label">' + (joinUrl ? '或用钉钉扫码加入' : '管理员尚未配置加入链接') + '</div></div>';
-    html += '</div>';
+      '<div class="step-desc">用钉钉扫描下方二维码，加入「' + esc(arch.name) + '」架构。</div>' +
+      '<div class="qr-box">' + (inviteImg ? '<img src="' + esc(inviteImg) + '" alt="加入邀请二维码" style="width:180px;height:180px;margin:0 auto;display:block">' : '<div class="qr-label">二维码缺失，请联系管理员</div>') + '</div>' +
+      '<div class="qr-label">' + esc(arch.name) + ' · 加入邀请</div>' +
+      '</div>';
 
     html += '<div class="step-card">' +
       '<div class="step-title"><div class="step-num">2</div><div class="step-name">填写入职登记</div></div>' +
-      '<div class="step-desc">加入架构后，填写该架构的入职登记表。</div>' +
-      '<div class="step-btns">';
-    if (formUrl) html += '<a class="step-btn" href="' + esc(formUrl) + '" target="_blank">在钉钉中打开</a>';
-    html += '</div>';
-    html += '<div class="qr-box"><div id="qr2"></div><div class="qr-label">' + (formUrl ? '或用钉钉扫码填写' : '管理员尚未配置登记链接') + '</div></div>';
-    html += '</div>';
+      '<div class="step-desc">加入架构后，用钉钉扫描下方二维码填写入职登记表。</div>' +
+      '<div class="qr-box">' + (formImg ? '<img src="' + esc(formImg) + '" alt="入职登记二维码" style="width:180px;height:180px;margin:0 auto;display:block">' : '<div class="qr-label">二维码缺失，请联系管理员</div>') + '</div>' +
+      '<div class="qr-label">' + esc(arch.name) + ' · 入职登记</div>' +
+      '</div>';
   } else {
     html += '<div style="padding:12px;background:#fef3c7;color:#92400e;border-radius:8px;font-size:13px;margin-bottom:16px">所属钉钉「' + esc(student.org || '') + '」未匹配到架构，请联系管理员。</div>';
   }
@@ -610,13 +591,6 @@ function renderOk(student) {
   html += '<div class="success-tip">签到成功。请按顺序完成以上两步，均在钉钉内进行。</div></div>';
 
   $('resultArea').innerHTML = html;
-  /* 延迟渲染二维码，确保DOM就绪 */
-  setTimeout(function() {
-    if (arch) {
-      if (arch.joinUrl && $('qr1')) renderQR($('qr1'), arch.joinUrl, 140);
-      if (arch.formUrl && $('qr2')) renderQR($('qr2'), arch.formUrl, 140);
-    }
-  }, 50);
 
   /* 记录签到 */
   var exists = config.checks.some(function(c){return c.name === student.name});
@@ -674,65 +648,13 @@ function showAdmin() {
   reloadAll();
 }
 function reloadAll() {
-  archDraft = config.archs.map(function(a){return Object.assign({}, a)});
   stuDraft = config.students.map(function(s){return Object.assign({}, s)});
-  renderArchRows();
   renderStuRows();
   renderStuStats();
   renderCheckRows();
   renderCheckStats();
   loadGhSettings();
 }
-
-/* ---- 架构配置 ---- */
-function renderArchRows() {
-  var box = $('archList');
-  box.innerHTML = '';
-  if (!archDraft.length) {
-    box.innerHTML = '<div class="empty-tip">暂无架构，点击下方「添加架构」</div>';
-    return;
-  }
-  archDraft.forEach(function(a, idx) {
-    var row = document.createElement('div');
-    row.className = 'arch-row';
-    row.innerHTML =
-      '<div><label>架构名称</label><input type="text" data-a="name" value="' + esc(a.name) + '" placeholder="如：探迹"></div>' +
-      '<div><label>加入邀请链接</label><input type="text" data-a="joinUrl" value="' + esc(a.joinUrl) + '" placeholder="https://h5.dingtalk.com/invite-page/..."></div>' +
-      '<div><label>入职登记链接</label><input type="text" data-a="formUrl" value="' + esc(a.formUrl) + '" placeholder="https://dturl.co/..."></div>' +
-      '<div><button class="btn btn-danger btn-sm" data-del="' + idx + '" type="button">删除</button></div>';
-    box.appendChild(row);
-  });
-  box.querySelectorAll('input[data-a]').forEach(function(inp) {
-    inp.addEventListener('input', function() {
-      var row = inp.closest('.arch-row');
-      var idx = Array.prototype.indexOf.call(row.parentNode.children, row);
-      archDraft[idx][inp.getAttribute('data-a')] = inp.value;
-    });
-  });
-  box.querySelectorAll('[data-del]').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      archDraft.splice(Number(btn.getAttribute('data-del')), 1);
-      renderArchRows();
-    });
-  });
-}
-$('addArchBtn').addEventListener('click', function() {
-  archDraft.push({name: '', joinUrl: '', formUrl: ''});
-  renderArchRows();
-});
-$('clearArchBtn').addEventListener('click', function() {
-  if (confirm('确定清空所有架构？')) {
-    archDraft = [];
-    renderArchRows();
-  }
-});
-$('saveArchBtn').addEventListener('click', function() {
-  config.archs = archDraft.filter(function(a){return a.name && a.name.trim()});
-  saveConfig();
-  toast('架构配置已保存');
-  reloadAll();
-  autoSync();
-});
 
 /* ---- 名单管理 ---- */
 function renderStuRows() {
@@ -999,25 +921,27 @@ $('adminEntry').addEventListener('click', function() { location.hash = '#/admin'
 
 /* ---- 加载远程配置（学员端自动同步） ---- */
 function loadRemoteConfig() {
-  /* 管理后台不加载远程配置，避免覆盖本地编辑的数据 */
-  if (location.hash.indexOf('#/admin') === 0) return;
-  /* 宽屏（电脑端）也不加载远程配置，管理端用本地配置 */
-  if (window.innerWidth >= 768) return;
+  /* 所有页面（含管理后台）都从远程加载配置，确保新设备/新浏览器也能看到最新名单 */
   fetch('config.json?v=' + Date.now(), {cache: 'no-store'})
     .then(function(r) { if (!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
     .then(function(cfg) {
       if (!cfg) return;
-      /* 只有远程架构非空时才覆盖 */
-      if (Array.isArray(cfg.archs) && cfg.archs.length > 0) {
-        config.archs = cfg.archs;
-      }
+      var updated = false;
+      /* 架构与二维码固定写死，不从远程覆盖 */
       /* 只有远程名单非空时才覆盖，避免空数据清空本地名单 */
       if (Array.isArray(cfg.students) && cfg.students.length > 0) {
         config.students = cfg.students;
+        updated = true;
       }
-      saveConfig();
-      console.log('Remote config loaded, archs:', config.archs.length, 'students:', config.students.length);
-      renderHomeTip();
+      if (updated) {
+        saveConfig();
+        console.log('Remote config loaded, students:', config.students.length);
+        /* 如果是管理后台且已登录，重新渲染页面 */
+        if (location.hash.indexOf('#/admin') === 0 && isLogged()) {
+          reloadAll();
+        }
+        renderHomeTip();
+      }
     })
     .catch(function(e) { console.warn('Remote config load failed:', e.message); });
 }
