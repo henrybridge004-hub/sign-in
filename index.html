@@ -170,7 +170,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 
   <div class="tabs">
     <div class="tab active" data-tab="stu">名单管理</div>
-    <div class="tab" data-tab="check">签到情况</div>
     <div class="tab" data-tab="setting">同步设置</div>
   </div>
 
@@ -198,27 +197,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
           <tr><th style="width:40px">#</th><th>姓名</th><th>所属钉钉</th><th>匹配架构</th><th style="width:80px">操作</th></tr>
         </thead>
         <tbody id="stuTable"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- 签到情况 -->
-  <div class="card tab-panel hide" id="panel-check">
-    <div class="card-title">签到情况</div>
-    <div class="tip">
-      显示名单中所有学员的签到状态。签到记录保存在本机浏览器，可导出 CSV 备份。
-    </div>
-    <div class="toolbar">
-      <button class="btn btn-ghost btn-sm" id="refreshCheckBtn" type="button">刷新</button>
-      <button class="btn btn-primary btn-sm" id="exportCheckBtn" type="button">导出签到表 (CSV)</button>
-    </div>
-    <div class="stats-row" id="checkStats"></div>
-    <div style="overflow-x:auto">
-      <table class="stu-table">
-        <thead>
-          <tr><th style="width:40px">#</th><th>姓名</th><th>所属钉钉</th><th>匹配架构</th><th>签到时间</th><th>状态</th></tr>
-        </thead>
-        <tbody id="checkTable"></tbody>
       </table>
     </div>
   </div>
@@ -260,20 +238,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
           <input type="checkbox" id="ghAutoSync" style="width:16px;height:16px">
           保存后自动同步到 GitHub
         </label>
-      </div>
-      <hr style="border:none;border-top:1px solid #e4e3dd;margin:20px 0">
-      <div class="card-title" style="margin-bottom:6px">钉钉群签到实时上报（可选）</div>
-      <div class="tip" style="margin-bottom:12px">
-        配置后，学员每完成一次签到，签到流水（姓名 + 架构 + 时间）会实时发送到钉钉群，管理员在群里即可核对谁已签到。<br>
-        <strong>如何获取 Webhook：</strong>钉钉群 → 群设置 → 机器人 → 添加机器人 → 自定义机器人 → 复制 Webhook 地址。安全设置建议选「自定义关键词」，关键词填 <code>签到</code>。
-      </div>
-      <div style="margin-bottom:12px">
-        <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px">钉钉群机器人 Webhook 地址</label>
-        <input type="text" id="whUrl" placeholder="https://oapi.dingtalk.com/robot/send?access_token=xxxxx" style="width:100%;padding:10px 12px;border:1px solid #e4e3dd;border-radius:8px;font-size:13px">
-      </div>
-      <div style="margin-bottom:16px">
-        <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px">加签密钥 Secret（若机器人安全设置选了「加签」则填写，否则留空）</label>
-        <input type="password" id="whSecret" placeholder="SEC 开头的密钥" style="width:100%;padding:10px 12px;border:1px solid #e4e3dd;border-radius:8px;font-size:13px">
       </div>
       <div class="toolbar">
         <button class="btn btn-primary" id="saveGhBtn" type="button">保存设置</button>
@@ -318,7 +282,6 @@ var DEFAULTS = {
     {name: "探力（济南）", joinUrl: "https://h5.dingtalk.com/invite-page/index.html?corpId=dingdcd9dc7abaeccc83cffb14fd42212f44&inviteCode=ga4RNwdQ8VIso9k&dtaction=os&org_name=%E6%8E%A2%E5%8A%9B(%E6%B5%8E%E5%8D%97)%E7%A7%91%E6%8A%80%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8", formUrl: "https://dturl.co/pzoPlKyXhP"}
   ],
   students: [],
-  checks: [],
   github: {
     token: '',
     owner: 'henrybridge004-hub',
@@ -326,8 +289,7 @@ var DEFAULTS = {
     branch: 'master',
     path: 'config.json',
     autoSync: true
-  },
-  webhook: { url: '', secret: '' }
+  }
 };
 
 var LS_KEY = 'sign_config_v3';
@@ -341,16 +303,13 @@ function getConfig() {
       /* 架构与二维码固定写死，不从本地存储读取 */
       v.archs = DEFAULTS.archs.map(function(a){return Object.assign({},a)});
       if (!Array.isArray(v.students)) v.students = [];
-      if (!Array.isArray(v.checks)) v.checks = [];
       if (!v.github || typeof v.github !== 'object') v.github = Object.assign({}, DEFAULTS.github);
-      if (!v.webhook || typeof v.webhook !== 'object') v.webhook = { url: '', secret: '' };
       return v;
     }
   } catch (e) {}
   return Object.assign({}, DEFAULTS, {
     archs: DEFAULTS.archs.map(function(a){return Object.assign({},a)}),
-    students: [],
-    checks: []
+    students: []
   });
 }
 function saveConfig() {
@@ -434,40 +393,6 @@ function renderQR(el, text, size) {
   el.appendChild(img);
 }
 
-/* 上报签到流水到钉钉群机器人（可选配置，失败静默不影响签到） */
-function reportCheck(student, archName) {
-  var wh = config.webhook;
-  if (!wh || !wh.url) return;
-  var msg = '【签到】' + (student.name || '') + ' | ' + (archName || student.org || '') + ' | ' + fmtTime(Date.now());
-  var body = { msgtype: 'text', text: { content: msg } };
-  var post = function(url) {
-    fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    }).catch(function(){});
-  };
-  var secret = wh.secret || '';
-  if (!secret) {
-    post(wh.url);
-    return;
-  }
-  /* 加签模式：timestamp + HMAC-SHA256(secret, timestamp+'\n'+secret) */
-  try {
-    var ts = Date.now();
-    var text = ts + '\n' + secret;
-    var enc = new TextEncoder();
-    crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'])
-      .then(function(key) { return crypto.subtle.sign('HMAC', key, enc.encode(text)); })
-      .then(function(sig) {
-        var hex = Array.prototype.map.call(new Uint8Array(sig), function(b){ return ('0' + b.toString(16)).slice(-2); }).join('');
-        var sign = encodeURIComponent(hex);
-        post(wh.url + (wh.url.indexOf('?') > -1 ? '&' : '?') + 'timestamp=' + ts + '&sign=' + sign);
-      })
-      .catch(function(){});
-  } catch (e) {}
-}
-
 /* ================= GitHub 自动同步 ================= */
 var syncing = false;
 function syncToGithub(callback) {
@@ -517,8 +442,7 @@ function syncToGithub(callback) {
     var data = {
       version: new Date().toISOString(),
       archs: archsToSync,
-      students: studentsToSync,
-      webhook: config.webhook || { url: '', secret: '' }
+      students: studentsToSync
     };
     var contentStr = JSON.stringify(data, null, 2);
 
@@ -657,16 +581,6 @@ function renderOk(student) {
       if (arch.formUrl && $('qr2')) renderQR($('qr2'), arch.formUrl, 220);
     }
   }, 50);
-
-  /* 上报签到流水到钉钉群（如已配置） */
-  reportCheck(student, archName);
-
-  /* 记录签到 */
-  var exists = config.checks.some(function(c){return c.name === student.name});
-  if (!exists) {
-    config.checks.push({name: student.name, org: student.org || '', ts: now.getTime()});
-    saveConfig();
-  }
 }
 function renderNotFound(kw) {
   var html = '<div class="notfound-card">' +
@@ -720,8 +634,6 @@ function reloadAll() {
   stuDraft = config.students.map(function(s){return Object.assign({}, s)});
   renderStuRows();
   renderStuStats();
-  renderCheckRows();
-  renderCheckStats();
   loadGhSettings();
 }
 
@@ -867,61 +779,6 @@ function handleFile(file) {
   reader.readAsArrayBuffer(file);
 }
 
-/* ---- 签到情况 ---- */
-function renderCheckRows() {
-  var tb = $('checkTable');
-  tb.innerHTML = '';
-  if (!config.students.length) {
-    tb.innerHTML = '<tr><td colspan="6" class="empty-tip">暂无名单</td></tr>';
-    return;
-  }
-  var checkMap = {};
-  config.checks.forEach(function(c){checkMap[c.name] = c});
-  config.students.forEach(function(s, idx) {
-    var arch = matchArch(s.org);
-    var c = checkMap[s.name];
-    var tr = document.createElement('tr');
-    tr.innerHTML =
-      '<td>' + (idx+1) + '</td>' +
-      '<td>' + esc(s.name) + '</td>' +
-      '<td>' + esc(s.org || '') + '</td>' +
-      '<td>' + (arch ? '<span class="match-tag ok">' + esc(arch.name) + '</span>' : '<span class="match-tag fail">未匹配</span>') + '</td>' +
-      '<td>' + (c ? fmtTime(c.ts) : '-') + '</td>' +
-      '<td>' + (c ? '<span class="match-tag ok">已签到</span>' : '<span class="match-tag fail">未签到</span>') + '</td>';
-    tb.appendChild(tr);
-  });
-}
-function renderCheckStats() {
-  var total = config.students.length;
-  var checked = config.checks.filter(function(c){return config.students.some(function(s){return s.name === c.name})}).length;
-  var unchecked = total - checked;
-  $('checkStats').innerHTML =
-    '<div class="stat-item"><div class="num">' + total + '</div><div class="label">应签到</div></div>' +
-    '<div class="stat-item"><div class="num" style="color:#16a34a">' + checked + '</div><div class="label">已签到</div></div>' +
-    '<div class="stat-item"><div class="num" style="color:#dc2626">' + unchecked + '</div><div class="label">未签到</div></div>';
-}
-$('refreshCheckBtn').addEventListener('click', function() {
-  renderCheckRows();
-  renderCheckStats();
-  toast('已刷新');
-});
-$('exportCheckBtn').addEventListener('click', function() {
-  var lines = ['姓名,所属钉钉,匹配架构,签到时间,状态'];
-  var checkMap = {};
-  config.checks.forEach(function(c){checkMap[c.name] = c});
-  config.students.forEach(function(s) {
-    var arch = matchArch(s.org);
-    var c = checkMap[s.name];
-    lines.push([s.name, s.org, arch ? arch.name : '未匹配', c ? fmtTime(c.ts) : '', c ? '已签到' : '未签到'].map(function(v){return '"'+String(v).replace(/"/g,'""')+'"'}).join(','));
-  });
-  var blob = new Blob(['\ufeff' + lines.join('\n')], {type: 'text/csv;charset=utf-8'});
-  var a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = '签到情况.csv';
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  URL.revokeObjectURL(a.href);
-});
-
 /* ---- 导出配置 ---- */
 $('exportConfigBtn').addEventListener('click', function() {
   var data = {
@@ -947,9 +804,6 @@ function loadGhSettings() {
   $('ghBranch').value = gh.branch || 'master';
   $('ghPath').value = gh.path || 'config.json';
   $('ghAutoSync').checked = gh.autoSync !== false;
-  var wh = config.webhook || {};
-  $('whUrl').value = wh.url || '';
-  $('whSecret').value = wh.secret || '';
 }
 $('saveGhBtn').addEventListener('click', function() {
   config.github = {
@@ -959,10 +813,6 @@ $('saveGhBtn').addEventListener('click', function() {
     branch: $('ghBranch').value.trim() || 'master',
     path: $('ghPath').value.trim() || 'config.json',
     autoSync: $('ghAutoSync').checked
-  };
-  config.webhook = {
-    url: $('whUrl').value.trim(),
-    secret: $('whSecret').value.trim()
   };
   saveConfig();
   toast('设置已保存');
@@ -1008,10 +858,6 @@ function loadRemoteConfig() {
       if (Array.isArray(cfg.students) && cfg.students.length > 0) {
         config.students = cfg.students;
         updated = true;
-      }
-      /* 同步钉钉群上报配置（学员端需要用它上报签到） */
-      if (cfg.webhook && typeof cfg.webhook === 'object') {
-        config.webhook = { url: cfg.webhook.url || '', secret: cfg.webhook.secret || '' };
       }
       if (updated) {
         saveConfig();
